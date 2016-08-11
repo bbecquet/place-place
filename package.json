@@ -1,0 +1,43 @@
+{
+  "name": "place-place",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "babel": "babel ./src/ --out-dir ./dist --source-maps",
+    "babel:watch": "babel ./src/ --out-dir ./dist --watch"
+  },
+  "keywords": [
+    "game",
+    "paris",
+    "map",
+    "places"
+  ],
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "add-module-exports",
+      "transform-class-properties",
+      "transform-object-assign"
+    ]
+  },
+  "author": "Benjamin Becquet (benjamin@bbecquet.net)",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-eslint": "^6.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.11.5",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-register": "^6.11.6",
+    "eslint": "^3.2.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "leaflet-graphicscale": "0.0.2",
+    "simple-get-json": "^1.1.0"
+  }
+}
