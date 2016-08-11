@@ -10,12 +10,8 @@ function preparePoints(points) {
 }
 
 function validateInput(map, places) {
-    // display the map background
-    map.addLayer(
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
-        })
-    );
+    // L.DomUtil.addClass(map.getContainer(), 'finished');
+    mapBackground.setOpacity(1);
 
     let distance = 0;
     // display the real positions
@@ -49,12 +45,20 @@ function getIcon(pointDefinition, isStarting) {
     });
 }
 
+let mapBackground;
 function initGame(points) {
     const pointSets = preparePoints(points);
 
     const map = L.map('map', {
         center: [48.86, 2.35],
         zoom: 13,
+        layers: [
+            mapBackground = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                opacity: 0,
+                className: 'mapBackground',
+                attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
+            })
+        ]
     });
     L.control.graphicScale().addTo(map);
 
