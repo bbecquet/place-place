@@ -33,7 +33,8 @@ function createMarker(pointDef, isStarting) {
         // title: pointDef.name,
         draggable: !isStarting,
     }).bindTooltip(pointDef.name, {
-        direction: 'bottom',
+        direction: 'top',
+        offset: [0, -80],
     });
 }
 
@@ -41,6 +42,7 @@ function getIcon(pointDefinition, isStarting) {
     return L.divIcon({
         className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
         iconSize: [80, 80],
+        iconAnchor: [40, 80],
         html: `<div style="background-image: url(pictos/${pointDefinition.picto});"></div>`,
     });
 }
