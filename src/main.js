@@ -74,7 +74,7 @@ function initGame(points) {
 
     const map = L.map('map', {
         layers: [
-            mapBackground = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            mapBackground = L.tileLayer('http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
                 opacity: 0,
                 className: 'mapBackground',
                 attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
