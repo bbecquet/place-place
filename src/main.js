@@ -49,7 +49,7 @@ function getIcon(pointDefinition, isStarting) {
 
 let mapBackground;
 function initGame(points) {
-    const pointSets = preparePoints(points);
+    const { startPoints, guessingPoints } = preparePoints(points);
 
     const map = L.map('map', {
         center: [48.86, 2.35],
@@ -64,8 +64,7 @@ function initGame(points) {
     });
     L.control.graphicScale().addTo(map);
 
-    const guessingPoints = pointSets.guessingPoints;
-    pointSets.startPoints.forEach(function(startPoint) {
+    startPoints.forEach(function(startPoint) {
         createMarker(startPoint, true).addTo(map);
     });
     // TODO: fit zoom
