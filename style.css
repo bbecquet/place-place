@@ -33,7 +33,7 @@ html, body { height: 100%; }
 }
 
 .startingPoint {
-
+    filter: hue-rotate(90deg);
 }
 
 .mapBackground {
