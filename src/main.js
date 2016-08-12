@@ -9,22 +9,43 @@ function preparePoints(points) {
     };
 }
 
+let totalDistance = 0;
 function validateInput(map, places) {
-    // L.DomUtil.addClass(map.getContainer(), 'finished');
     mapBackground.setOpacity(1);
 
-    let distance = 0;
-    // display the real positions
+    let sequence = Promise.resolve(0);
     places.forEach(function(place) {
-        distance += checkPlace(map, place);
+        sequence = sequence.then(function() {
+            return checkPlace(map, place);
+        });
     });
 
+    sequence.then(() => {
+        displayDistance(totalDistance);
+    });
+}
+
+function displayDistance(distance) {
     document.getElementById('currentPoint').innerHTML = Math.round(distance) + ' m';
 }
 
 function checkPlace(map, place) {
-    L.marker(place.position).addTo(map);
-    return L.latLng(place.position).distanceTo(place.userPosition);
+    return new Promise(resolve => {
+        map.fitBounds([place.position, place.userPosition], {
+            animate: true,
+            padding: [100, 100],
+            maxZoom: map.getZoom(),
+        });
+        createMarker(place, true).addTo(map);
+        const distance = L.latLng(place.position).distanceTo(place.userPosition);
+
+        totalDistance += distance;
+        displayDistance(totalDistance);
+
+        setTimeout(() => {
+            resolve();
+        }, 2000);
+    });
 }
 
 function createMarker(pointDef, isStarting) {
