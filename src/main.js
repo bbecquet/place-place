@@ -52,8 +52,6 @@ function initGame(points) {
     const { startPoints, guessingPoints } = preparePoints(points);
 
     const map = L.map('map', {
-        center: [48.86, 2.35],
-        zoom: 13,
         layers: [
             mapBackground = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 opacity: 0,
@@ -63,11 +61,11 @@ function initGame(points) {
         ]
     });
     L.control.graphicScale().addTo(map);
+    map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
 
     startPoints.forEach(function(startPoint) {
         createMarker(startPoint, true).addTo(map);
     });
-    // TODO: fit zoom
 
     let finished = false;
     const finishButton = document.getElementById('finishButton');
