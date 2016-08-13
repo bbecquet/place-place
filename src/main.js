@@ -115,18 +115,25 @@ class Game {
 
     checkPlace(place) {
         return new Promise(resolve => {
-            this.map.fitBounds([place.position, place.userPosition], {
-                animate: true,
-                padding: [100, 100],
-                maxZoom: this.map.getZoom(),
+            this.map.setView(place.userPosition, 15, {
+                animate: false,
             });
-            this.createMarker(place, true).addTo(this.map);
-            const distance = L.latLng(place.position).distanceTo(place.userPosition);
 
-            this.totalDistance += distance;
-            this.displayDistance(this.totalDistance);
+            setTimeout(() => {
+                this.map.panTo(place.position, {
+                    animate: true,
+                    duration: 1,
+                }).once('moveend', () => {
+                    this.createMarker(place, true).addTo(this.map);
 
-            setTimeout(() => { resolve(); }, 2000);
+                    const distance = L.latLng(place.position).distanceTo(place.userPosition);
+
+                    this.totalDistance += distance;
+                    this.displayDistance(this.totalDistance);
+
+                    setTimeout(() => { resolve(); }, 1000);
+                });
+            }, 1000)
         });
     }
 }
