@@ -1,8 +1,15 @@
-* { margin: 0; padding: 0; }
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
 
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  font-size: 20px;
+}
+
 #map {
+  flex: 1;
   width: 100%;
   height: 100%;
 }
@@ -12,16 +19,26 @@ html, body { height: 100%; }
 }
 
 #controls {
-  position: absolute;
-  top: 50px;
-  right: 50px;
-  background-color: white;
-  padding: 15px;
-  z-index: 1000;
+  flex-shrink: 0;
+  flex-basis: 150px;
+  background-color: black;
+  text-align: center;
+  color: white;
+  padding: 30px;
+}
+
+@media (min-width: 800px) {
+  body {
+    flex-direction: row;
+  }
+
+  #controls {
+    flex-basis: 300px;
+  }
 }
 
 #finishButton {
-  margin: 30px;
+  margin: 30px 0;
   display: none;
 }
 

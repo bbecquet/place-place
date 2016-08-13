@@ -25,6 +25,8 @@ class Game {
     }
 
     initGame(points) {
+        this.mapBackground.setOpacity(0);
+
         const { startPoints, guessingPoints } = this.preparePoints(points);
         this.startPoints = startPoints;
         this.guessingPoints = guessingPoints;
@@ -62,7 +64,7 @@ class Game {
         if(this.currentPointIndex >= this.guessingPoints.length) {
             this.currentPointInfo.innerHTML = "Vous pouvez encore changer la position des points";
             this.finished = true;
-            this.finishButton.style.display = 'block';
+            this.finishButton.style.display = 'inline-block';
         } else {
             this.currentPointInfo.innerHTML = `Placez <b>${this.guessingPoints[this.currentPointIndex].name}</b>`;
         }
