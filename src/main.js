@@ -1,129 +1,136 @@
 import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 
-function preparePoints(points) {
-    // TODO: random pick 2, randomize the others
-    return {
-        startPoints: points.slice(0, 2),
-        guessingPoints: points.slice(2)
-    };
-}
+class Game {
+    constructor(points) {
+        this.createMap();
+        this.initGame(points);
+    }
 
-let totalDistance = 0;
-function validateInput(map, places) {
-    mapBackground.setOpacity(1);
+    createMap() {
+        this.mapBackground = L.tileLayer('http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            opacity: 0,
+            className: 'mapBackground',
+            attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
+        })
 
-    let sequence = Promise.resolve(0);
-    places.forEach(function(place) {
-        sequence = sequence.then(function() {
-            return checkPlace(map, place);
+        this.map = L.map('map')
+            .addLayer(this.mapBackground)
+            .addControl(L.control.graphicScale())
+            .on('click', evt => {
+                if(this.finished) { return; }
+                this.placePoint(this.guessingPoints[this.currentPointIndex], evt.latlng);
+                this.advancePoint();
+            });
+    }
+
+    initGame(points) {
+        const { startPoints, guessingPoints } = this.preparePoints(points);
+        this.startPoints = startPoints;
+        this.guessingPoints = guessingPoints;
+
+        this.map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
+
+        startPoints.forEach(startPoint => {
+            this.createMarker(startPoint, true).addTo(this.map);
         });
-    });
 
-    sequence.then(() => {
-        displayDistance(totalDistance);
-    });
-}
-
-function displayDistance(distance) {
-    document.getElementById('currentPoint').innerHTML = Math.round(distance) + ' m';
-}
-
-function checkPlace(map, place) {
-    return new Promise(resolve => {
-        map.fitBounds([place.position, place.userPosition], {
-            animate: true,
-            padding: [100, 100],
-            maxZoom: map.getZoom(),
+        this.finished = false;
+        this.finishButton = document.getElementById('finishButton');
+        L.DomEvent.on(this.finishButton, 'click', () => {
+            this.finishButton.style.display = 'none';
+            this.validateInput(this.guessingPoints);
         });
-        createMarker(place, true).addTo(map);
-        const distance = L.latLng(place.position).distanceTo(place.userPosition);
 
-        totalDistance += distance;
-        displayDistance(totalDistance);
+        this.currentPointInfo = document.getElementById('currentPoint');
+        this.currentPointIndex = -1;
+        this.totalDistance = 0;
 
-        setTimeout(() => {
-            resolve();
-        }, 2000);
-    });
-}
+        this.advancePoint();
+    }
 
-function createMarker(pointDef, isStarting) {
-    return L.marker(isStarting ? pointDef.position : pointDef.userPosition, {
-        icon: getIcon(pointDef, isStarting),
-        // title: pointDef.name,
-        draggable: !isStarting,
-    }).bindTooltip(pointDef.name, {
-        direction: 'top',
-        offset: [0, -80],
-    });
-}
+    preparePoints(points) {
+        // TODO: random pick 2, randomize the others
+        return {
+            startPoints: points.slice(0, 2),
+            guessingPoints: points.slice(2),
+        };
+    }
 
-function getIcon(pointDefinition, isStarting) {
-    return L.divIcon({
-        className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
-        iconSize: [80, 80],
-        iconAnchor: [40, 80],
-        html: `<div style="background-image: url(pictos/${pointDefinition.picto});"></div>`,
-    });
-}
-
-let mapBackground;
-function initGame(points) {
-    const { startPoints, guessingPoints } = preparePoints(points);
-
-    const map = L.map('map', {
-        layers: [
-            mapBackground = L.tileLayer('http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-                opacity: 0,
-                className: 'mapBackground',
-                attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
-            })
-        ]
-    });
-    L.control.graphicScale().addTo(map);
-    map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
-
-    startPoints.forEach(function(startPoint) {
-        createMarker(startPoint, true).addTo(map);
-    });
-
-    let finished = false;
-    const finishButton = document.getElementById('finishButton');
-    L.DomEvent.on(finishButton, 'click', function() {
-        finishButton.style.display = 'none';
-        validateInput(map, guessingPoints);
-    });
-
-    const currentPointInfo = document.getElementById('currentPoint');
-    let currentPointIndex = -1;
-    function advancePoint() {
-        currentPointIndex++;
-        if(currentPointIndex >= guessingPoints.length) {
-            currentPointInfo.innerHTML = "Vous pouvez encore changer la position des points";
-            finished = true;
-            finishButton.style.display = 'block';
+    advancePoint() {
+        this.currentPointIndex++;
+        if(this.currentPointIndex >= this.guessingPoints.length) {
+            this.currentPointInfo.innerHTML = "Vous pouvez encore changer la position des points";
+            this.finished = true;
+            this.finishButton.style.display = 'block';
         } else {
-            currentPointInfo.innerHTML = `Placez <b>${guessingPoints[currentPointIndex].name}</b>`;
+            this.currentPointInfo.innerHTML = `Placez <b>${this.guessingPoints[this.currentPointIndex].name}</b>`;
         }
     }
 
-    function placePoint(pointDefinition, clickedPosition) {
+    placePoint(pointDefinition, clickedPosition) {
         pointDefinition.userPosition = clickedPosition;
-        createMarker(pointDefinition, false).addTo(map);
+        this.createMarker(pointDefinition, false).addTo(this.map);
     }
 
-    map.on('click', function(evt) {
-        if(finished) { return; }
-        placePoint(guessingPoints[currentPointIndex], evt.latlng);
-        advancePoint();
-    });
+    getIcon(pointDefinition, isStarting) {
+        return L.divIcon({
+            className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
+            iconSize: [80, 80],
+            iconAnchor: [40, 80],
+            html: `<div style="background-image: url(pictos/${pointDefinition.picto});"></div>`,
+        });
+    }
 
-    advancePoint();
+    createMarker(pointDef, isStarting) {
+        return L.marker(isStarting ? pointDef.position : pointDef.userPosition, {
+            icon: this.getIcon(pointDef, isStarting),
+            draggable: !isStarting,
+        }).bindTooltip(pointDef.name, {
+            direction: 'top',
+            offset: [0, -80],
+        });
+    }
+
+    validateInput(places) {
+        this.mapBackground.setOpacity(1);
+
+        let sequence = Promise.resolve(0);
+        places.forEach(place => {
+            sequence = sequence.then(() => {
+                return this.checkPlace(place);
+            });
+        });
+
+        sequence.then(() => {
+            this.displayDistance(this.totalDistance);
+        });
+    }
+
+    displayDistance(distance) {
+        document.getElementById('currentPoint').innerHTML = Math.round(distance) + ' m';
+    }
+
+    checkPlace(place) {
+        return new Promise(resolve => {
+            this.map.fitBounds([place.position, place.userPosition], {
+                animate: true,
+                padding: [100, 100],
+                maxZoom: this.map.getZoom(),
+            });
+            this.createMarker(place, true).addTo(this.map);
+            const distance = L.latLng(place.position).distanceTo(place.userPosition);
+
+            this.totalDistance += distance;
+            this.displayDistance(this.totalDistance);
+
+            setTimeout(() => { resolve(); }, 2000);
+        });
+    }
 }
 
 window.onload = function() {
     getJSON('points.json').then(obj => {
-        initGame(obj);
+        new Game(obj);
     });
 };
