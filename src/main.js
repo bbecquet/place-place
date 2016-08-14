@@ -3,6 +3,7 @@ import './style.less';
 import 'leaflet';
 import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
+import Promise from 'bluebird';
 
 class Game {
     constructor(points) {
@@ -100,12 +101,7 @@ class Game {
     validateInput(places) {
         this.mapBackground.setOpacity(1);
 
-        let sequence = Promise.resolve(0);
-        places.forEach(place => {
-            sequence = sequence.then(() => {
-                return this.checkPlace(place);
-            });
-        });
+        let sequence = Promise.each(places, place => this.checkPlace(place));
 
         sequence.then(() => {
             this.displayDistance(this.totalDistance);
