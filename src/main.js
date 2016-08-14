@@ -1,3 +1,6 @@
+import './style.less';
+
+import 'leaflet';
 import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 
