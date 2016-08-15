@@ -19,6 +19,9 @@ module.exports = {
             },{
                 test: /\.png$/,
                 loader: 'file-loader?name=images/[name].png'
+            },{
+                test: /\.svg$/,
+                loader: 'file-loader?name=pictos/[name].svg'
             }
         ]
     },
