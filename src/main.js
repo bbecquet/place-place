@@ -13,10 +13,11 @@ class Game {
     }
 
     createMap() {
-        this.mapBackground = L.tileLayer('http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        // OSM-HOT 'http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+        this.mapBackground = L.tileLayer('http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
             opacity: 0,
             className: 'mapBackground',
-            attribution: '&copy; <a href="http://osm.org/copyright">openstreetmap</a> contributors'
+            attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>. Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors',
         })
 
         this.map = L.map('map')
@@ -111,8 +112,17 @@ class Game {
         });
     }
 
+    formatDistance(meters) {
+        return `${Math.round(meters)} m`;
+    }
+
     displayDistance(distance) {
-        document.getElementById('currentPoint').innerHTML = Math.round(distance) + ' m';
+        document.getElementById('currentPoint').innerHTML = this.formatDistance(distance);
+    }
+
+    scoreFromDistance(meters) {
+        // 10 points when < 200m, then 1 point less for every 200 m
+        return Math.ceil((Math.max(0, 2000 - meters)) / 200);
     }
 
     checkPlace(place) {
@@ -122,11 +132,18 @@ class Game {
             });
 
             setTimeout(() => {
-                const line = L.polyline([place.userPosition]).addTo(this.map);
+                let distance;
+                const distanceLine = L.polyline([place.userPosition], {
+                        dashArray: '5,5',
+                    })
+                    .bindTooltip(() => this.formatDistance(distance))
+                    .addTo(this.map);
                 animatePoint(place.userPosition, place.position, 1000, (p, isFinished) => {
-                    line.addLatLng(p);
+                    distance = p.distanceTo(place.userPosition);
+                    distanceLine
+                        .addLatLng(p)
+                        .openTooltip(p);
                     this.map.panTo(p);
-                    const distance = p.distanceTo(place.userPosition);
 
                     if(isFinished) {
                         setTimeout(() => {
