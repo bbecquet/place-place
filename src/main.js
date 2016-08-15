@@ -105,6 +105,8 @@ class Game {
         }).bindTooltip(pointDef.name, {
             direction: 'top',
             offset: [0, -80],
+        }).on('dragend', evt => {
+            pointDef.userPosition = evt.target.getLatLng();
         });
     }
 
