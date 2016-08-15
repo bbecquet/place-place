@@ -1,5 +1,4 @@
 
-
 export function disableInteractivity(map) {
     map._handlers.forEach(handler => { handler.disable(); });
 };
@@ -9,7 +8,7 @@ export function enableInteractivity(map) {
 };
 
 function interpolateLatLng(p1, p2, duration, t) {
-    let k = t/duration;
+    let k = t / duration;
     k = (k < 0) ? 0 : k;
     k = (k > 1) ? 1 : k;
     return L.latLng(p1.lat + k * (p2.lat - p1.lat),

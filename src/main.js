@@ -7,7 +7,7 @@ import Promise from 'bluebird';
 import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
 
 class Game {
-    constructor(points) {
+    constructor() {
         this.createMap();
 
         this.finishButton = document.getElementById('finishButton');
@@ -17,8 +17,6 @@ class Game {
         });
         this.currentPointInfo = document.getElementById('currentPoint');
         this.scoreElement = document.getElementById('score');
-
-        this.initGame(points);
     }
 
     createMap() {
@@ -26,8 +24,9 @@ class Game {
         this.mapBackground = L.tileLayer('http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
             opacity: 0,
             className: 'mapBackground',
-            attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>. Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors',
-        })
+            attribution: `Map by <a href="http://stamen.com">Stamen Design</a>.
+                          Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
+        });
 
         this.map = L.map('map')
             .addLayer(this.mapBackground)
@@ -71,7 +70,7 @@ class Game {
     advancePoint() {
         this.currentPointIndex++;
         if (this.currentPointIndex >= this.guessingPoints.length) {
-            this.currentPointInfo.innerHTML = "Vous pouvez encore changer la position des points";
+            this.currentPointInfo.innerHTML = 'Vous pouvez encore changer la position des points';
             this.finished = true;
             this.finishButton.style.display = 'inline-block';
         } else {
@@ -143,12 +142,12 @@ class Game {
             setTimeout(() => {
                 let distance;
                 const distanceLine = L.polyline([place.userPosition], {
-                        dashArray: '5,10',
-                    })
-                    .bindTooltip(() => this.formatDistance(distance), {
-                        className: 'distanceTooltip',
-                    })
-                    .addTo(this.map);
+                    dashArray: '5,10',
+                })
+                .bindTooltip(() => this.formatDistance(distance), {
+                    className: 'distanceTooltip',
+                })
+                .addTo(this.map);
                 animatePoint(place.userPosition, place.position, 1000, (p, isFinished) => {
                     distance = p.distanceTo(place.userPosition);
                     distanceLine
@@ -170,6 +169,7 @@ class Game {
 
 window.onload = function() {
     getJSON('points.json').then(obj => {
-        new Game(obj);
+        const game = new Game();
+        game.initGame(obj);
     });
 };
