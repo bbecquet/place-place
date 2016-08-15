@@ -4,6 +4,7 @@ import 'leaflet';
 import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 import Promise from 'bluebird';
+import { disableInteractivity, enableInteractivity } from './utils.js';
 
 class Game {
     constructor(points) {
@@ -29,7 +30,9 @@ class Game {
     }
 
     initGame(points) {
+        // restore map state
         this.mapBackground.setOpacity(0);
+        enableInteractivity(this.map);
 
         const { startPoints, guessingPoints } = this.preparePoints(points);
         this.startPoints = startPoints;
@@ -99,6 +102,7 @@ class Game {
     }
 
     validateInput(places) {
+        disableInteractivity(this.map);
         this.mapBackground.setOpacity(1);
 
         let sequence = Promise.each(places, place => this.checkPlace(place));
