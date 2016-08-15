@@ -32,7 +32,7 @@ body {
 
 @media (min-width: 800px) {
   body {
-    flex-direction: row;
+    flex-direction: row-reverse;
   }
 
   #controls {
@@ -52,6 +52,13 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
   }
+}
+
+.previewPicto {
+  display: inline-block;
+  height: 100px;
+  max-width: 100%;
+  filter: grayscale(1) invert(1);
 }
 
 .startingPoint {

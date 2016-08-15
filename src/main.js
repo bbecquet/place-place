@@ -80,7 +80,9 @@ class Game {
             this.finished = true;
             this.finishButton.style.display = 'inline-block';
         } else {
-            this.currentPointInfo.innerHTML = `Placez <b>${this.guessingPoints[this.currentPointIndex].name}</b>`;
+            const currentPoint = this.guessingPoints[this.currentPointIndex];
+            this.currentPointInfo.innerHTML = `<img class="previewPicto" src="pictos/${currentPoint.picto}" /><br />
+                Placez <b>${currentPoint.name}</b>`;
         }
     }
 
