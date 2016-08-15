@@ -15,6 +15,7 @@ class Game {
             this.finishButton.style.display = 'none';
             this.validateInput(this.guessingPoints);
         });
+        this.replayButton = document.getElementById('replayButton');
         this.currentPointInfo = document.getElementById('currentPoint');
         this.scoreElement = document.getElementById('score');
     }
@@ -29,27 +30,32 @@ class Game {
         });
 
         this.map = L.map('map')
-            .addLayer(this.mapBackground)
             .addControl(L.control.graphicScale())
+            .addLayer(this.mapBackground)
             .on('click', evt => {
                 if(this.finished) { return; }
                 this.placePoint(this.guessingPoints[this.currentPointIndex], evt.latlng);
                 this.advancePoint();
             });
+
+        this.gameOverlays = L.layerGroup().addTo(this.map);
     }
 
     initGame(points) {
+        this.mapBackground.setOpacity(0);
+        this.gameOverlays.clearLayers();
+
+        L.DomUtil.empty(this.scoreElement);
+        L.DomUtil.addClass(this.replayButton, 'hidden');
+
         const { startPoints, guessingPoints } = this.preparePoints(points);
         this.startPoints = startPoints;
         this.guessingPoints = guessingPoints;
 
-        this.mapBackground.setOpacity(0);
         this.map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
         startPoints.forEach(startPoint => {
-            this.createMarker(startPoint, true).addTo(this.map);
+            this.createMarker(startPoint, true).addTo(this.gameOverlays);
         });
-
-        L.DomUtil.empty(this.scoreElement);
 
         this.finished = false;
         this.currentPointIndex = -1;
@@ -80,7 +86,7 @@ class Game {
 
     placePoint(pointDefinition, clickedPosition) {
         pointDefinition.userPosition = clickedPosition;
-        this.createMarker(pointDefinition, false).addTo(this.map);
+        this.createMarker(pointDefinition, false).addTo(this.gameOverlays);
     }
 
     getIcon(pointDefinition, isStarting) {
@@ -112,6 +118,7 @@ class Game {
         sequence.then(() => {
             this.displayDistance(this.totalDistance);
             enableInteractivity(this.map);
+            L.DomUtil.removeClass(this.replayButton, 'hidden');
         });
     }
 
@@ -147,7 +154,7 @@ class Game {
                 .bindTooltip(() => this.formatDistance(distance), {
                     className: 'distanceTooltip',
                 })
-                .addTo(this.map);
+                .addTo(this.gameOverlays);
                 animatePoint(place.userPosition, place.position, 1000, (p, isFinished) => {
                     distance = p.distanceTo(place.userPosition);
                     distanceLine
@@ -171,5 +178,9 @@ window.onload = function() {
     getJSON('points.json').then(obj => {
         const game = new Game();
         game.initGame(obj);
+
+        L.DomEvent.on(document.getElementById('replayButton'), 'click', () => {
+            game.initGame(obj);
+        });
     });
 };
