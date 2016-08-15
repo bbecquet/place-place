@@ -19,11 +19,7 @@ function interpolateLatLng(p1, p2, duration, t) {
 export function animatePoint(p1, p2, duration, callback) {
     let start = null;
 
-    console.log('plop');
-
     function animationFrame(timeStamp) {
-        console.log('plip', timeStamp);
-
         if (start === null) { start = timeStamp; }
         const elapsed = timeStamp - start;
         let p = interpolateLatLng(L.latLng(p1), L.latLng(p2), duration, elapsed);
