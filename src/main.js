@@ -44,6 +44,7 @@ class Game {
     initGame(points) {
         this.mapBackground.setOpacity(0);
         this.gameOverlays.clearLayers();
+        this.userMarkers = L.layerGroup().addTo(this.gameOverlays);
 
         L.DomUtil.empty(this.scoreElement);
         L.DomUtil.addClass(this.replayButton, 'hidden');
@@ -88,7 +89,7 @@ class Game {
 
     placePoint(pointDefinition, clickedPosition) {
         pointDefinition.userPosition = clickedPosition;
-        this.createMarker(pointDefinition, false).addTo(this.gameOverlays);
+        this.createMarker(pointDefinition, false).addTo(this.userMarkers);
     }
 
     getIcon(pointDefinition, isStarting) {
@@ -115,6 +116,7 @@ class Game {
     validateInput(places) {
         L.DomUtil.empty(this.currentPointInfo);
         disableInteractivity(this.map);
+        this.userMarkers.eachLayer(m => { m.dragging.disable(); });
         this.mapBackground.setOpacity(1);
 
         let sequence = Promise.each(places, place => this.checkPlace(place));
