@@ -4,7 +4,7 @@ import 'leaflet';
 import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 import Promise from 'bluebird';
-import { disableInteractivity, enableInteractivity } from './utils.js';
+import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
 
 class Game {
     constructor(points) {
@@ -30,9 +30,7 @@ class Game {
     }
 
     initGame(points) {
-        // restore map state
         this.mapBackground.setOpacity(0);
-        enableInteractivity(this.map);
 
         const { startPoints, guessingPoints } = this.preparePoints(points);
         this.startPoints = startPoints;
@@ -109,6 +107,7 @@ class Game {
 
         sequence.then(() => {
             this.displayDistance(this.totalDistance);
+            enableInteractivity(this.map);
         });
     }
 
@@ -123,20 +122,21 @@ class Game {
             });
 
             setTimeout(() => {
-                this.map.panTo(place.position, {
-                    animate: true,
-                    duration: 1,
-                }).once('moveend', () => {
-                    this.createMarker(place, true).addTo(this.map);
+                const line = L.polyline([place.userPosition]).addTo(this.map);
+                animatePoint(place.userPosition, place.position, 1000, (p, isFinished) => {
+                    line.addLatLng(p);
+                    this.map.panTo(p);
+                    const distance = p.distanceTo(place.userPosition);
 
-                    const distance = L.latLng(place.position).distanceTo(place.userPosition);
-
-                    this.totalDistance += distance;
-                    this.displayDistance(this.totalDistance);
-
-                    setTimeout(() => { resolve(); }, 1000);
+                    if(isFinished) {
+                        setTimeout(() => {
+                            this.totalDistance += distance;
+                            this.displayDistance(this.totalDistance);
+                            resolve();
+                        }, 1000);
+                    }
                 });
-            }, 1000)
+            }, 1000);
         });
     }
 }
