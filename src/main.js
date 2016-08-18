@@ -5,6 +5,7 @@ import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 import Promise from 'bluebird';
 import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
+import { shuffle } from 'lodash';
 
 class Game {
     constructor() {
@@ -49,7 +50,7 @@ class Game {
         L.DomUtil.empty(this.scoreElement);
         L.DomUtil.addClass(this.replayButton, 'hidden');
 
-        const { startPoints, guessingPoints } = this.preparePoints(points);
+        const { startPoints, guessingPoints } = this.preparePoints(points, 2);
         this.startPoints = startPoints;
         this.guessingPoints = guessingPoints;
 
@@ -66,11 +67,11 @@ class Game {
         this.advancePoint();
     }
 
-    preparePoints(points) {
-        // TODO: random pick 2, with min distance criterion, and randomize the others
+    preparePoints(points, nbStart) {
+        const shuffledPoints = shuffle(points);
         return {
-            startPoints: points.slice(0, 2),
-            guessingPoints: points.slice(2),
+            startPoints: shuffledPoints.slice(0, nbStart),
+            guessingPoints: shuffledPoints.slice(nbStart),
         };
     }
 
@@ -129,7 +130,7 @@ class Game {
     }
 
     formatDistance(meters) {
-        return `${Math.round(meters)} m`;
+        return `${Math.round(meters / 10) * 10} m`;
     }
 
     displayDistance(distance) {

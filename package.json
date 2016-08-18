@@ -47,6 +47,7 @@
     "bluebird": "^3.4.1",
     "leaflet": "^1.0.0-rc.3",
     "leaflet-graphicscale": "0.0.2",
+    "lodash": "^4.15.0",
     "simple-get-json": "^1.1.0"
   }
 }
