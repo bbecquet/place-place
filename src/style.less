@@ -1,18 +1,33 @@
 @import "../node_modules/leaflet/dist/leaflet.css";
 @import "../node_modules/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css";
 
+@front: blue;
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; }
 
 body {
-  display: flex;
-  flex-direction: column;
   font-family: sans-serif;
-  font-size: 20px;
+  font-size: 24px;
+}
+
+#dialog {
+  position: absolute;
+  margin: 50px auto;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 600px;
+  height: auto;
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 0 10px black;
+  background-color: white;
+  z-index: 1000;
 }
 
 #map {
-  flex: 1;
   width: 100%;
   height: 100%;
 }
@@ -22,27 +37,10 @@ body {
 }
 
 #controls {
-  flex-shrink: 0;
-  flex-basis: 150px;
   background-color: black;
   text-align: center;
   color: white;
   padding: 30px;
-}
-
-@media (min-width: 800px) {
-  body {
-    flex-direction: row-reverse;
-  }
-
-  #controls {
-    flex-basis: 300px;
-  }
-}
-
-#finishButton {
-  margin: 30px 0;
-  display: none;
 }
 
 .gameMarker {
@@ -75,8 +73,8 @@ body {
   display: inline-block;
   height: 100px;
   max-width: 100%;
-  filter: grayscale(1) invert(1);
-  -webkit-filter: grayscale(1) invert(1);
+  filter: grayscale(1);
+  -webkit-filter: grayscale(1);
 }
 
 .mapBackground {
@@ -88,7 +86,7 @@ body {
   box-shadow: none;
   font-size: 20px;
   font-weight: bold;
-  color: blue;
+  color: @front;
 
   &:before {
     display: none;
@@ -97,4 +95,26 @@ body {
 
 .hidden {
   display: none;
+}
+
+button {
+  background-color: white;
+  color: @front;
+  font-size: 24px;
+  padding: 15px;
+  border: 2px solid @front;
+  border-radius: 5px;
+  transition: 0.2s all ease;
+  margin: 30px 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: lighten(@front, 45%);
+    box-shadow: 0 0 3px 3px lighten(@front, 35%);
+  }
+}
+
+#finalScore {
+  font-weight: bold;
+  font-size: 36px;
 }

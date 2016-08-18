@@ -5,24 +5,23 @@ import 'leaflet-graphicscale';
 import getJSON from 'simple-get-json';
 import Promise from 'bluebird';
 import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
-import { shuffle } from 'lodash';
+import { shuffle, sum } from 'lodash';
+
+const DEBUG = true;
 
 class Game {
-    constructor() {
+    constructor(points) {
+        this.points = points;
         this.createMap();
 
-        this.finishButton = document.getElementById('finishButton');
-        L.DomEvent.on(this.finishButton, 'click', () => {
-            this.finishButton.style.display = 'none';
-            this.validateInput(this.guessingPoints);
-        });
-        this.replayButton = document.getElementById('replayButton');
+        L.DomEvent.on(L.DomUtil.get('startButton'), 'click', () => { this.initGame(); });
+        L.DomEvent.on(L.DomUtil.get('replayButton'), 'click', () => { this.initGame(); });
+        L.DomEvent.on(L.DomUtil.get('finishButton'), 'click', () => { this.validateInput(); });
+
         this.currentPointInfo = document.getElementById('currentPoint');
-        this.scoreElement = document.getElementById('score');
     }
 
     createMap() {
-        // OSM-HOT 'http://tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png'
         this.mapBackground = L.tileLayer('http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
             opacity: 0,
             className: 'mapBackground',
@@ -30,7 +29,10 @@ class Game {
                           Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
         });
 
-        this.map = L.map('map')
+        this.map = L.map('map', {
+            center: [48, 2],
+            zoom: 0,
+        })
             .addControl(L.control.graphicScale())
             .addLayer(this.mapBackground)
             .on('click', evt => {
@@ -42,15 +44,14 @@ class Game {
         this.gameOverlays = L.layerGroup().addTo(this.map);
     }
 
-    initGame(points) {
+    initGame() {
+        L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden');
+
         this.mapBackground.setOpacity(0);
         this.gameOverlays.clearLayers();
         this.userMarkers = L.layerGroup().addTo(this.gameOverlays);
 
-        L.DomUtil.empty(this.scoreElement);
-        L.DomUtil.addClass(this.replayButton, 'hidden');
-
-        const { startPoints, guessingPoints } = this.preparePoints(points, 2);
+        const { startPoints, guessingPoints } = this.preparePoints(this.points, 2);
         this.startPoints = startPoints;
         this.guessingPoints = guessingPoints;
 
@@ -78,9 +79,8 @@ class Game {
     advancePoint() {
         this.currentPointIndex++;
         if (this.currentPointIndex >= this.guessingPoints.length) {
-            this.currentPointInfo.innerHTML = 'Vous pouvez encore changer la position des points';
+            this.showEndMessage();
             this.finished = true;
-            this.finishButton.style.display = 'inline-block';
         } else {
             const currentPoint = this.guessingPoints[this.currentPointIndex];
             this.currentPointInfo.innerHTML = `<img class="previewPicto" src="pictos/${currentPoint.picto}" /><br />
@@ -114,18 +114,19 @@ class Game {
         });
     }
 
-    validateInput(places) {
+    validateInput() {
+        L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden');
+
         L.DomUtil.empty(this.currentPointInfo);
         disableInteractivity(this.map);
         this.userMarkers.eachLayer(m => { m.dragging.disable(); });
         this.mapBackground.setOpacity(1);
 
-        let sequence = Promise.each(places, place => this.checkPlace(place));
+        let sequence = Promise.each(this.guessingPoints, place => this.checkPlace(place));
 
         sequence.then(() => {
-            this.displayDistance(this.totalDistance);
+            this.showScoreScreen(this.totalDistance);
             enableInteractivity(this.map);
-            L.DomUtil.removeClass(this.replayButton, 'hidden');
         });
     }
 
@@ -133,18 +134,16 @@ class Game {
         return `${Math.round(meters / 10) * 10} m`;
     }
 
-    displayDistance(distance) {
-        this.scoreElement.innerHTML = this.formatDistance(distance);
-    }
-
     scoreFromDistance(meters) {
         // 10 points when < 200m, then 1 point less for every 200 m
-        return Math.ceil((Math.max(0, 2000 - meters)) / 200);
+        return Math.ceil((Math.max(0, 2000 - meters)) / 20);
     }
 
     addScore(place, meters) {
-        this.totalDistance += meters;
-        this.displayDistance(this.totalDistance);
+        place.score = {
+            meters,
+            points: this.scoreFromDistance(meters),
+        };
     }
 
     checkPlace(place) {
@@ -154,40 +153,68 @@ class Game {
             });
 
             setTimeout(() => {
-                let distance;
+                let stepDistance;
                 const distanceLine = L.polyline([place.userPosition], {
                     dashArray: '5,10',
                 })
-                .bindTooltip(() => this.formatDistance(distance), {
+                .bindTooltip(() => this.formatDistance(stepDistance), {
                     className: 'distanceTooltip',
                 })
                 .addTo(this.gameOverlays);
-                animatePoint(place.userPosition, place.position, 1000, (p, isFinished) => {
-                    distance = p.distanceTo(place.userPosition);
-                    distanceLine
-                        .addLatLng(p)
-                        .openTooltip(p);
-                    this.map.panTo(p);
+                const fullDistance = place.userPosition.distanceTo(place.position);
+                animatePoint(place.userPosition, place.position, this.getAnimationDuration(fullDistance),
+                    (p, isFinished) => {
+                        stepDistance = p.distanceTo(place.userPosition);
+                        distanceLine
+                            .addLatLng(p)
+                            .openTooltip(p);
+                        this.map.panTo(p);
 
-                    if(isFinished) {
-                        setTimeout(() => {
-                            this.addScore(place, distance);
-                            resolve();
-                        }, 1000);
+                        if(isFinished) {
+                            setTimeout(() => {
+                                this.addScore(place, stepDistance);
+                                resolve();
+                            }, 1000);
+                        }
                     }
-                });
+                );
             }, 1000);
         });
+    }
+
+    getAnimationDuration(distance) {
+        if (DEBUG) { return 0; }
+        // duration proportional to distance, with max 3s, min 1/2s
+        return Math.min(3000, Math.max(distance, 500));
+    }
+
+    showDialog(contentElement) {
+        const dialog = L.DomUtil.get('dialog');
+        if (dialog.hasChildNodes()) {
+            L.DomUtil.get('hide').appendChild(dialog.firstChild);
+        }
+        dialog.appendChild(L.DomUtil.get(contentElement));
+        dialog.classList.remove('hidden');
+    }
+
+    showStartScreen() {
+        this.showDialog('startMessage');
+    }
+
+    showEndMessage() {
+        this.showDialog('endMessage');
+    }
+
+    showScoreScreen() {
+        const totalPoints = sum(this.guessingPoints.map(pt => pt.score.points));
+        L.DomUtil.get('finalScore').innerHTML = totalPoints;
+        this.showDialog('scoreMessage');
     }
 }
 
 window.onload = function() {
-    getJSON('points.json').then(obj => {
-        const game = new Game();
-        game.initGame(obj);
-
-        L.DomEvent.on(document.getElementById('replayButton'), 'click', () => {
-            game.initGame(obj);
-        });
+    getJSON('points.json').then(points => {
+        const game = new Game(points);
+        game.showStartScreen();
     });
 };

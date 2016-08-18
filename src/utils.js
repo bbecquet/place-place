@@ -16,6 +16,11 @@ function interpolateLatLng(p1, p2, duration, t) {
 };
 
 export function animatePoint(p1, p2, duration, callback) {
+    if (duration <= 0) {
+        callback(L.latLng(p2), true);
+        return;
+    }
+
     let start = null;
 
     function animationFrame(timeStamp) {

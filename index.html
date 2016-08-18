@@ -12,11 +12,27 @@
 
     <body>
         <div id="map"></div>
+        <div id="dialog" class="hidden"></div>
         <div id="controls">
           <div id="currentPoint"></div>
           <div id="score"></div>
-          <button id="finishButton">Terminer</button>
-          <button id="replayButton" class="hidden">Rejouer</button>
+        </div>
+        <div id="hide" class="hidden">
+          <div id="startMessage">
+            <p>Saurez-vous placer blablablabla ?</p>
+            <button id="startButton">Démarrer</button>
+          </div>
+
+          <div id="endMessage">
+            <p>Vous pouvez encore changer la position des points</p>
+            <button id="finishButton">Terminer</button>
+          </div>
+
+          <div id="scoreMessage">
+            Score final :
+            <div id="finalScore"></div>
+            <button id="replayButton">Rejouer</button>
+          </div>
         </div>
     </body>
 </html>
