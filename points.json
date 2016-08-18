@@ -2,36 +2,36 @@
   {
     "name": "Tour Eiffel",
     "position": [48.858333, 2.294167],
-    "picto": "tour-eiffel.svg"
+    "picto": "tour-eiffel.png"
   },
   {
     "name": "Pyramide du Louvre",
     "position": [48.860932, 2.335902],
-    "picto": "pyramide-du-louvre.svg"
+    "picto": "pyramide-du-louvre.png"
   },
   {
     "name": "Arc de Triomphe",
     "position": [48.8738, 2.295],
-    "picto": "arc-de-triomphe.svg"
+    "picto": "arc-de-triomphe.png"
   },
   {
     "name": "Notre-Dame",
     "position": [48.853056, 2.349722],
-    "picto": "notre-dame.svg"
+    "picto": "notre-dame.png"
   },
   {
     "name": "Centre Pompidou",
     "position": [48.860653, 2.352411],
-    "picto": "pompidou.svg"
+    "picto": "pompidou.png"
   },
   {
     "name": "Panthéon",
     "position": [48.8461111, 2.345833],
-    "picto": "pantheon.svg"
+    "picto": "pantheon.png"
   },
   {
     "name": "Place de la République",
     "position": [48.8675, 2.36384],
-    "picto": "republique.svg"
+    "picto": "republique.png"
   }
 ]
