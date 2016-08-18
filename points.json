@@ -28,5 +28,10 @@
     "name": "Panthéon",
     "position": [48.8461111, 2.345833],
     "picto": "pantheon.svg"
+  },
+  {
+    "name": "Place de la République",
+    "position": [48.8675, 2.36384],
+    "picto": "republique.svg"
   }
 ]
