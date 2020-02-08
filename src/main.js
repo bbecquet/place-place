@@ -139,11 +139,6 @@ class Game {
         return `${Math.round(meters / 10) * 10} m`;
     }
 
-    scoreFromDistance(meters) {
-        // 10 points when < 200m, then 1 point less for every 200 m
-        return Math.ceil((Math.max(0, 2000 - meters)) / 20);
-    }
-
     checkPlace(place) {
         return new Promise(resolve => {
             this.map.setView(place.userPosition, 15, {
@@ -209,11 +204,10 @@ class Game {
     }
 
     showScoreScreen() {
-        const totalPoints = this.guessingPoints
+        const totalDistance = this.guessingPoints
             .map(pt => pt.userPosition.distanceTo(pt.position))
-            .map(this.scoreFromDistance)
             .reduce((sum, points) => sum + points, 0);
-        getId('finalScore').innerHTML = totalPoints;
+        getId('finalScore').innerHTML = Math.round(totalDistance) + ' m';
         this.showDialog(getId('scoreMessage'));
     }
 
