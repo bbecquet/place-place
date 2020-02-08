@@ -8,17 +8,16 @@ import { disableInteractivity, enableInteractivity, animatePoint } from './utils
 import { shuffle, sum } from 'lodash';
 
 const DEBUG = true;
+const getId = L.DomUtil.get;
 
 class Game {
     constructor(points) {
         this.points = points;
         this.createMap();
 
-        L.DomEvent.on(L.DomUtil.get('startButton'), 'click', () => { this.initGame(); });
-        L.DomEvent.on(L.DomUtil.get('replayButton'), 'click', () => { this.initGame(); });
-        L.DomEvent.on(L.DomUtil.get('finishButton'), 'click', () => { this.validateInput(); });
-
-        this.currentPointInfo = document.getElementById('currentPoint');
+        L.DomEvent.on(getId('startButton'), 'click', () => { this.initGame(); });
+        L.DomEvent.on(getId('replayButton'), 'click', () => { this.initGame(); });
+        L.DomEvent.on(getId('finishButton'), 'click', () => { this.validateInput(); });
     }
 
     createMap() {
@@ -33,7 +32,10 @@ class Game {
             center: [48, 2],
             zoom: 0,
         })
-            .addControl(L.control.graphicScale())
+            .addControl(L.control.graphicScale({
+                fill: 'fill',
+                showSubunits: true,
+            }))
             .addLayer(this.mapBackground)
             .on('click', evt => {
                 if(this.finished) { return; }
@@ -82,9 +84,7 @@ class Game {
             this.showEndMessage();
             this.finished = true;
         } else {
-            const currentPoint = this.guessingPoints[this.currentPointIndex];
-            this.currentPointInfo.innerHTML = `<img class="previewPicto" src="pictos/${currentPoint.picto}" /><br />
-                Placez <b>${currentPoint.name}</b>`;
+            this.showCurrentPoint(this.guessingPoints[this.currentPointIndex]);
         }
     }
 
@@ -117,7 +117,6 @@ class Game {
     validateInput() {
         L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden');
 
-        L.DomUtil.empty(this.currentPointInfo);
         disableInteractivity(this.map);
         this.userMarkers.eachLayer(m => { m.dragging.disable(); });
         this.mapBackground.setOpacity(1);
@@ -188,27 +187,40 @@ class Game {
         return Math.min(3000, Math.max(distance, 500));
     }
 
-    showDialog(contentElement) {
-        const dialog = L.DomUtil.get('dialog');
-        if (dialog.hasChildNodes()) {
-            L.DomUtil.get('hide').appendChild(dialog.firstChild);
+    showDialog(content) {
+        const dialog = getId('dialog');
+        if (dialog.hasChildNodes() && dialog.dataset.saveNode) {
+            getId('hide').appendChild(dialog.firstChild);
+        } else {
+            L.DomUtil.empty(dialog);
         }
-        dialog.appendChild(L.DomUtil.get(contentElement));
+        if (typeof content === 'string') {
+            dialog.innerHTML = content;
+            dialog.dataset.saveNode = '';
+        } else {
+            dialog.appendChild(content);
+            dialog.dataset.saveNode = 'true';
+        }
         dialog.classList.remove('hidden');
     }
 
     showStartScreen() {
-        this.showDialog('startMessage');
+        this.showDialog(getId('startMessage'));
     }
 
     showEndMessage() {
-        this.showDialog('endMessage');
+        this.showDialog(getId('endMessage'));
     }
 
     showScoreScreen() {
         const totalPoints = sum(this.guessingPoints.map(pt => pt.score.points));
-        L.DomUtil.get('finalScore').innerHTML = totalPoints;
-        this.showDialog('scoreMessage');
+        getId('finalScore').innerHTML = totalPoints;
+        this.showDialog(getId('scoreMessage'));
+    }
+
+    showCurrentPoint(point) {
+        this.showDialog(`<img class="previewPicto" src="pictos/${point.picto}" /><br />
+            Placez <b>${point.name}</b>`);
     }
 }
 
