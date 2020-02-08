@@ -32,15 +32,15 @@ class Game {
 
     createMap() {
         this.mapBackground = L.tileLayer('http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
-            opacity: 0,
+            // opacity: 0,
             className: 'mapBackground',
             attribution: `Map by <a href="http://stamen.com">Stamen Design</a>.
                           Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
         });
 
         this.map = L.map('map', {
-            center: [48, 2],
-            zoom: 0,
+            center: [48.85, 2.35],
+            zoom: 12,
         })
             .addControl(L.control.graphicScale({
                 fill: 'fill',
@@ -74,7 +74,8 @@ class Game {
 
         this.finished = false;
         this.currentPointIndex = -1;
-        this.scores = [];
+
+        this.map.getContainer().style.cursor = 'crosshair';
 
         this.advancePoint();
     }
@@ -107,6 +108,7 @@ class Game {
         if (this.currentPointIndex >= this.guessingPoints.length) {
             this.showEndMessage();
             this.finished = true;
+            this.map.getContainer().style.cursor = 'pointer';
         } else {
             this.showCurrentPoint(this.guessingPoints[this.currentPointIndex]);
         }
@@ -121,8 +123,8 @@ class Game {
     getIcon(pointDefinition, isStarting) {
         return L.divIcon({
             className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
-            iconSize: [80, 80],
-            iconAnchor: [40, 80],
+            iconSize: [60, 60],
+            iconAnchor: [30, 60],
             html: `<div style="background-image: url(pictos/${pointDefinition.picto});"></div>`,
         });
     }
@@ -132,8 +134,8 @@ class Game {
             icon: this.getIcon(pointDef, isStarting),
             draggable: !isStarting,
         }).bindTooltip(pointDef.name, {
-            direction: 'top',
-            offset: [0, -80],
+            direction: 'bottom',
+            offset: [0, 20],
         }).on('dragend', evt => {
             pointDef.userPosition = evt.target.getLatLng();
         }).on('drag', () => {
@@ -147,7 +149,7 @@ class Game {
 
         disableInteractivity(this.map);
         this.markers.eachLayer(m => { m.dragging.disable(); });
-        this.mapBackground.setOpacity(1);
+        this.mapBackground.setOpacity(0.75);
 
         for(let i = 0; i < this.guessingPoints.length; i++) {
             await this.checkPlace(this.guessingPoints[i]);
@@ -174,6 +176,7 @@ class Game {
                 })
                 .bindTooltip(() => this.formatDistance(stepDistance), {
                     className: 'distanceTooltip',
+                    permanent: true,
                 })
                 .addTo(this.gameOverlays);
                 const fullDistance = place.userPosition.distanceTo(place.position);
