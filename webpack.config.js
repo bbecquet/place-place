@@ -19,8 +19,5 @@ module.exports = {
                 loader: 'file-loader?name=pictos/[name].svg'
             }
         ]
-    },
-    plugins: [
-        extractLESS
-    ]
+    }
 };
