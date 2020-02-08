@@ -1,6 +1,8 @@
 import L from 'leaflet';
 import 'leaflet-graphicscale';
 import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
+import tin from '@turf/tin';
+import { featureCollection } from '@turf/helpers';
 
 function shuffle(array) {
     const a = array.slice();
@@ -20,6 +22,7 @@ const getId = L.DomUtil.get;
 class Game {
     constructor(points) {
         this.points = points;
+        this.finished = true;
         this.createMap();
 
         L.DomEvent.on(getId('startButton'), 'click', () => { this.initGame(); });
@@ -58,7 +61,7 @@ class Game {
 
         this.mapBackground.setOpacity(0);
         this.gameOverlays.clearLayers();
-        this.userMarkers = L.layerGroup().addTo(this.gameOverlays);
+        this.markers = L.layerGroup().addTo(this.gameOverlays);
 
         const { startPoints, guessingPoints } = this.preparePoints(this.points, 2);
         this.startPoints = startPoints;
@@ -66,7 +69,7 @@ class Game {
 
         this.map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
         startPoints.forEach(startPoint => {
-            this.createMarker(startPoint, true).addTo(this.gameOverlays);
+            this.createMarker(startPoint, true).addTo(this.markers);
         });
 
         this.finished = false;
@@ -74,6 +77,21 @@ class Game {
         this.scores = [];
 
         this.advancePoint();
+    }
+
+    drawMesh() {
+        const points = featureCollection(this.markers.getLayers().map(marker => marker.toGeoJSON()));
+        const mesh = tin(points);
+        if (this.mesh) {
+            this.gameOverlays.removeLayer(this.mesh);
+        }
+        this.mesh = L.geoJSON(mesh, { style: () => ({
+            fillOpacity: 0,
+            weight: 1,
+            color: 'silver',
+            dashArray: '2,2',
+        }) })
+            .addTo(this.gameOverlays);
     }
 
     preparePoints(points, nbStart) {
@@ -96,7 +114,8 @@ class Game {
 
     placePoint(pointDefinition, clickedPosition) {
         pointDefinition.userPosition = clickedPosition;
-        this.createMarker(pointDefinition, false).addTo(this.userMarkers);
+        this.createMarker(pointDefinition, false).addTo(this.markers);
+        this.drawMesh();
     }
 
     getIcon(pointDefinition, isStarting) {
@@ -117,14 +136,17 @@ class Game {
             offset: [0, -80],
         }).on('dragend', evt => {
             pointDef.userPosition = evt.target.getLatLng();
-        });
+        }).on('drag', () => {
+            this.drawMesh();
+        })
     }
 
     async validateInput() {
+        this.gameOverlays.removeLayer(this.mesh);
         L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden');
 
         disableInteractivity(this.map);
-        this.userMarkers.eachLayer(m => { m.dragging.disable(); });
+        this.markers.eachLayer(m => { m.dragging.disable(); });
         this.mapBackground.setOpacity(1);
 
         for(let i = 0; i < this.guessingPoints.length; i++) {
