@@ -1,11 +1,18 @@
-import './style.less';
-
-import 'leaflet';
+import L from 'leaflet';
 import 'leaflet-graphicscale';
-import getJSON from 'simple-get-json';
-import Promise from 'bluebird';
 import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js';
-import { shuffle, sum } from 'lodash';
+
+function shuffle(array) {
+    const a = array.slice();
+    let j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
 
 const DEBUG = true;
 const getId = L.DomUtil.get;
@@ -64,7 +71,6 @@ class Game {
 
         this.finished = false;
         this.currentPointIndex = -1;
-        this.totalDistance = 0;
         this.scores = [];
 
         this.advancePoint();
@@ -114,19 +120,19 @@ class Game {
         });
     }
 
-    validateInput() {
+    async validateInput() {
         L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden');
 
         disableInteractivity(this.map);
         this.userMarkers.eachLayer(m => { m.dragging.disable(); });
         this.mapBackground.setOpacity(1);
 
-        let sequence = Promise.each(this.guessingPoints, place => this.checkPlace(place));
+        for(let i = 0; i < this.guessingPoints.length; i++) {
+            await this.checkPlace(this.guessingPoints[i]);
+        };
 
-        sequence.then(() => {
-            this.showScoreScreen(this.totalDistance);
-            enableInteractivity(this.map);
-        });
+        this.showScoreScreen();
+        enableInteractivity(this.map);
     }
 
     formatDistance(meters) {
@@ -136,13 +142,6 @@ class Game {
     scoreFromDistance(meters) {
         // 10 points when < 200m, then 1 point less for every 200 m
         return Math.ceil((Math.max(0, 2000 - meters)) / 20);
-    }
-
-    addScore(place, meters) {
-        place.score = {
-            meters,
-            points: this.scoreFromDistance(meters),
-        };
     }
 
     checkPlace(place) {
@@ -170,10 +169,7 @@ class Game {
                         this.map.panTo(p);
 
                         if(isFinished) {
-                            setTimeout(() => {
-                                this.addScore(place, stepDistance);
-                                resolve();
-                            }, 1000);
+                            setTimeout(resolve, 1000);
                         }
                     }
                 );
@@ -213,7 +209,10 @@ class Game {
     }
 
     showScoreScreen() {
-        const totalPoints = sum(this.guessingPoints.map(pt => pt.score.points));
+        const totalPoints = this.guessingPoints
+            .map(pt => pt.userPosition.distanceTo(pt.position))
+            .map(this.scoreFromDistance)
+            .reduce((sum, points) => sum + points, 0);
         getId('finalScore').innerHTML = totalPoints;
         this.showDialog(getId('scoreMessage'));
     }
@@ -225,8 +224,10 @@ class Game {
 }
 
 window.onload = function() {
-    getJSON('points.json').then(points => {
-        const game = new Game(points);
-        game.showStartScreen();
-    });
+    fetch('points.json')
+        .then(response => response.json())
+        .then(points => {
+            const game = new Game(points);
+            game.showStartScreen();
+        });
 };
