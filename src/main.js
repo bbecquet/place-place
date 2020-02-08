@@ -67,7 +67,7 @@ class Game {
         this.startPoints = startPoints;
         this.guessingPoints = guessingPoints;
 
-        this.map.fitBounds(startPoints.map(p => p.position), { padding: [100, 100] });
+        this.map.fitBounds(this.points.map(p => p.position), { padding: [100, 100] });
         startPoints.forEach(startPoint => {
             this.createMarker(startPoint, true).addTo(this.markers);
         });
@@ -226,6 +226,8 @@ class Game {
     }
 
     showScoreScreen() {
+        this.map.flyToBounds(this.points.map(p => p.position), { padding: [100, 100] });
+        
         const totalDistance = this.guessingPoints
             .map(pt => pt.userPosition.distanceTo(pt.position))
             .reduce((sum, points) => sum + points, 0);
