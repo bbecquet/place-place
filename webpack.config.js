@@ -1,5 +1,3 @@
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var extractLESS = new ExtractTextPlugin('[name].css');
 
 module.exports = {
     entry: './src/main.js',
@@ -13,9 +11,6 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-            },{
-                test: /\.less$/,
-                loader: extractLESS.extract(['css','less'])
             },{
                 test: /\.png$/,
                 loader: 'file-loader?name=images/[name].png'
