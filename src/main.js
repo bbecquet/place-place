@@ -6,11 +6,12 @@ import {
   animatePoint,
   formatDistance,
   shuffleArray,
+  last,
 } from './utils.js'
 import tin from '@turf/tin'
 import { featureCollection } from '@turf/helpers'
 
-const DEBUG = true
+const DEBUG = false
 const getId = L.DomUtil.get
 
 class Game {
@@ -172,19 +173,19 @@ class Game {
 
   checkPlace(place) {
     return new Promise(resolve => {
-      this.map.setView(place.userPosition, 15, {
-        animate: false,
-      })
-
       setTimeout(() => {
-        let stepDistance
         const distanceLine = L.polyline([place.userPosition], {
           dashArray: '5,10',
+          color: 'blue',
         })
-          .bindTooltip(() => formatDistance(stepDistance), {
-            className: 'distanceTooltip',
-            permanent: true,
-          })
+          .bindTooltip(
+            line => formatDistance(last(line.getLatLngs()).distanceTo(place.userPosition)),
+            {
+              className: 'distanceTooltip',
+              permanent: true,
+              direction: 'top',
+            }
+          )
           .addTo(this.gameOverlays)
         const fullDistance = place.userPosition.distanceTo(place.position)
         animatePoint(
@@ -192,9 +193,7 @@ class Game {
           place.position,
           this.getAnimationDuration(fullDistance),
           (p, isFinished) => {
-            stepDistance = p.distanceTo(place.userPosition)
             distanceLine.addLatLng(p).openTooltip(p)
-            this.map.panTo(p)
 
             if (isFinished) {
               setTimeout(resolve, 1000)

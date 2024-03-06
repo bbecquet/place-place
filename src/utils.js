@@ -44,16 +44,18 @@ export function animatePoint(p1, p2, duration, callback) {
   L.Util.requestAnimFrame(animationFrame)
 }
 
-export const formatDistance = (meters) => `${Math.round(meters / 10) * 10} m`
+export const formatDistance = meters => `${Math.round(meters / 10) * 10} m`
 
 export function shuffleArray(array) {
-    const a = array.slice()
-    let j, x, i
-    for (i = a.length - 1; i > 0; i--) {
-      j = Math.floor(Math.random() * (i + 1))
-      x = a[i]
-      a[i] = a[j]
-      a[j] = x
-    }
-    return a
+  const a = array.slice()
+  let j, x, i
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1))
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
   }
+  return a
+}
+
+export const last = array => (Array.isArray(array) ? array[array.length - 1] : undefined)
