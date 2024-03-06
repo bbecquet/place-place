@@ -22,9 +22,9 @@
     "rollup": "^1.31.0"
   },
   "dependencies": {
+    "@kalisio/leaflet-graphicscale": "^1.0.0",
     "@turf/helpers": "^6.1.4",
     "@turf/tin": "^6.0.2",
-    "leaflet": "^1.6.0",
-    "leaflet-graphicscale": "0.0.2"
+    "leaflet": "^1.9.4"
   }
 }

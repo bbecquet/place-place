@@ -1,5 +1,5 @@
 @import "../node_modules/leaflet/dist/leaflet.css";
-@import "../node_modules/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css";
+@import "../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css";
 
 :root{
   --front: blue;
