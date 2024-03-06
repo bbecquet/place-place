@@ -1,12 +1,19 @@
-@import "../node_modules/leaflet/dist/leaflet.css";
-@import "../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css";
+@import '../node_modules/leaflet/dist/leaflet.css';
+@import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
 
-:root{
+:root {
   --front: blue;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
 
 body {
   font-family: sans-serif;
@@ -45,7 +52,7 @@ body {
 }
 
 .gameMarker:after {
-  content: "";
+  content: '';
   display: block;
   width: 100%;
   height: 10px;
