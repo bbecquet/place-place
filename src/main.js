@@ -1,20 +1,14 @@
 import L from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
-import { disableInteractivity, enableInteractivity, animatePoint } from './utils.js'
+import {
+  disableInteractivity,
+  enableInteractivity,
+  animatePoint,
+  formatDistance,
+  shuffleArray,
+} from './utils.js'
 import tin from '@turf/tin'
 import { featureCollection } from '@turf/helpers'
-
-function shuffle(array) {
-  const a = array.slice()
-  let j, x, i
-  for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1))
-    x = a[i]
-    a[i] = a[j]
-    a[j] = x
-  }
-  return a
-}
 
 const DEBUG = true
 const getId = L.DomUtil.get
@@ -108,7 +102,7 @@ class Game {
   }
 
   preparePoints(points, nbStart) {
-    const shuffledPoints = shuffle(points)
+    const shuffledPoints = shuffleArray(points)
     return {
       startPoints: shuffledPoints.slice(0, nbStart),
       guessingPoints: shuffledPoints.slice(nbStart),
@@ -176,10 +170,6 @@ class Game {
     enableInteractivity(this.map)
   }
 
-  formatDistance(meters) {
-    return `${Math.round(meters / 10) * 10} m`
-  }
-
   checkPlace(place) {
     return new Promise(resolve => {
       this.map.setView(place.userPosition, 15, {
@@ -191,7 +181,7 @@ class Game {
         const distanceLine = L.polyline([place.userPosition], {
           dashArray: '5,10',
         })
-          .bindTooltip(() => this.formatDistance(stepDistance), {
+          .bindTooltip(() => formatDistance(stepDistance), {
             className: 'distanceTooltip',
             permanent: true,
           })
