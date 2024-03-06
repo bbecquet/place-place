@@ -42,12 +42,10 @@ class Game {
 
   createMap() {
     this.mapBackground = L.tileLayer(
-      "http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png",
+      "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
-        // opacity: 0,
         className: "mapBackground",
-        attribution: `Map by <a href="http://stamen.com">Stamen Design</a>.
-                          Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
+        attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
       }
     );
 

@@ -71,6 +71,7 @@ body {
 
 .mapBackground {
   transition: opacity 1s ease;
+  filter: grayscale(1);
 }
 
 .distanceTooltip {
