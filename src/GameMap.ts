@@ -45,7 +45,7 @@ class GameMap {
       showSubunits: true,
     })
 
-    this.map = L.map(element, options)
+    this.map = L.map(element, { ...options, zoomSnap: 0.1 })
       .addControl(scale)
       .addLayer(this.background)
       .addLayer(this.markers)
@@ -87,7 +87,7 @@ class GameMap {
       icon,
       draggable: !isStarting,
     })
-      .bindTooltip(point.name, { direction: 'bottom', offset: [0, 20] })
+      .bindTooltip(point.name, { direction: 'bottom', offset: [0, 10], permanent: isStarting })
       .on('dragend', evt => {
         // TODO: avoid this on-place modification of the model
         point.userPosition = evt.target.getLatLng()

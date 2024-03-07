@@ -63,9 +63,13 @@ body {
   bottom: 0;
 }
 
+.gameMarker:not(.startingPoint) {
+  cursor: grab;
+}
+
 .gameMarker.startingPoint {
   filter: hue-rotate(90deg);
-  -webkit-filter: hue-rotate(90deg);
+  cursor: not-allowed;
 }
 
 .previewPicto {
