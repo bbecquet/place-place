@@ -68,6 +68,13 @@ class GameMap {
     })
   }
 
+  freezeInput() {
+    this.freezeMarkers()
+    this.toggleInteractivity(false)
+    this.toggleBackground(true)
+    this.mesh.removeFrom(this.map)
+  }
+
   createMarker(point: GamePoint, isStarting?: boolean) {
     const icon = L.divIcon({
       className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
@@ -105,7 +112,12 @@ class GameMap {
   }
 
   fit(points?: LatLngExpression[]) {
-    const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
+    const coords =
+      points ||
+      this.markers
+        .getLayers()
+        .filter(layer => !!layer.getLatLng)
+        .map(m => (m as Marker).getLatLng())
     this.map.flyToBounds(L.latLngBounds(coords), { padding: [100, 100] })
   }
 

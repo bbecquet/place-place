@@ -97,16 +97,16 @@ class Game {
     // this.gameOverlays.removeLayer(this.mesh)
     L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden')
 
-    this.map.freezeMarkers()
-    this.map.toggleInteractivity(false)
-    this.map.toggleBackground(true)
+    this.map.freezeInput()
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
       await this.map.checkPlace(this.guessingPoints[i])
     }
 
-    this.showScoreScreen()
+    this.map.fit()
     this.map.toggleInteractivity(true)
+
+    this.showScoreScreen()
   }
 
   showDialog(content) {
@@ -135,8 +135,6 @@ class Game {
   }
 
   showScoreScreen() {
-    this.map.fit()
-
     const totalDistance = this.guessingPoints
       .map(pt => pt.userPosition.distanceTo(pt.position))
       .reduce((sum, points) => sum + points, 0)
