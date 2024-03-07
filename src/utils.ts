@@ -1,18 +1,4 @@
-import { Map, LatLng } from 'leaflet'
-
-export function disableInteractivity(map: Map) {
-  // @ts-ignore
-  map._handlers.forEach(handler => {
-    handler.disable()
-  })
-}
-
-export function enableInteractivity(map: Map) {
-  // @ts-ignore
-  map._handlers.forEach(handler => {
-    handler.enable()
-  })
-}
+import { LatLng } from 'leaflet'
 
 export const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(n, max))
 
