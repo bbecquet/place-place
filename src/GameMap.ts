@@ -1,6 +1,5 @@
 import L, {
   LatLngExpression,
-  Layer,
   LayerGroup,
   LeafletMouseEvent,
   Map,
@@ -9,16 +8,24 @@ import L, {
   TileLayer,
 } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
-import { animatePoint, formatDistance, last, clamp } from './utils'
+import 'leaflet-textpath'
 import tin from '@turf/tin'
 import { featureCollection } from '@turf/helpers'
+import { segmentEach } from '@turf/meta'
 import { GamePoint } from './types'
+import { animatePoint, formatDistance, last, clamp } from './utils'
+
+const meshStyle = {
+  weight: 1,
+  color: 'silver',
+  dashArray: '2,2',
+}
 
 class GameMap {
   map: Map
   background: TileLayer
   markers: LayerGroup
-  mesh?: Layer
+  mesh: LayerGroup
 
   constructor(
     element: string | HTMLElement,
@@ -30,6 +37,7 @@ class GameMap {
       attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
     })
     this.markers = L.layerGroup()
+    this.mesh = L.layerGroup()
 
     /* @ts-ignore no TS declaration for this */
     const scale = L.control.graphicScale({
@@ -41,6 +49,7 @@ class GameMap {
       .addControl(scale)
       .addLayer(this.background)
       .addLayer(this.markers)
+      .addLayer(this.mesh)
       .on('click', onClick)
   }
 
@@ -92,10 +101,7 @@ class GameMap {
 
   clear() {
     this.markers.clearLayers()
-    if (this.mesh) {
-      this.mesh.remove()
-      this.mesh = undefined
-    }
+    this.mesh.clearLayers()
   }
 
   fit(points?: LatLngExpression[]) {
@@ -147,17 +153,24 @@ class GameMap {
     const mesh = tin(
       featureCollection(this.markers.getLayers().map(marker => (marker as Marker).toGeoJSON()))
     )
-    if (this.mesh) {
-      this.mesh.remove()
-    }
-    this.mesh = L.geoJSON(mesh, {
-      style: () => ({
-        fillOpacity: 0,
-        weight: 1,
-        color: 'silver',
-        dashArray: '2,2',
-      }),
-    }).addTo(this.map)
+    const uniqueLines: Record<string, number[][]> = {}
+    segmentEach(mesh, segment => {
+      if (segment) {
+        const coords = segment.geometry.coordinates.slice().sort()
+        uniqueLines[coords.flat().join('|')] = coords
+      }
+    })
+    const lines = Object.values(uniqueLines).map(line => line.map(pt => L.latLng(pt[1], pt[0])))
+    this.mesh.clearLayers()
+    lines.forEach(latLngs => {
+      this.mesh.addLayer(
+        L.polyline(latLngs, meshStyle)
+          /* @ts-ignore leaflet-path doesn't have Typescript declarations */
+          .setText(formatDistance(latLngs[0].distanceTo(latLngs[1])), {
+            center: true,
+          })
+      )
+    })
   }
 }
 

@@ -28,7 +28,9 @@
   "dependencies": {
     "@kalisio/leaflet-graphicscale": "^1.0.0",
     "@turf/helpers": "^6.5.0",
+    "@turf/meta": "^6.5.0",
     "@turf/tin": "^6.5.0",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "leaflet-textpath": "^1.2.3"
   }
 }
