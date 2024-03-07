@@ -72,6 +72,7 @@ class GameMap {
     })
       .bindTooltip(point.name, { direction: 'bottom', offset: [0, 20] })
       .on('dragend', evt => {
+        // TODO: avoid this on-place modification of the model
         point.userPosition = evt.target.getLatLng()
       })
       .addTo(this.markers)
