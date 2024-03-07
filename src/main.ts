@@ -1,4 +1,4 @@
-import L from 'leaflet'
+import L, { LatLng, Layer, LayerGroup, Map, Marker, Polyline, TileLayer } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
 import {
   disableInteractivity,
@@ -7,31 +7,38 @@ import {
   formatDistance,
   shuffleArray,
   last,
-} from './utils.js'
+  clamp,
+} from './utils'
 import tin from '@turf/tin'
 import { featureCollection } from '@turf/helpers'
 
-const DEBUG = false
 const getId = L.DomUtil.get
 
+type GamePoint = {
+  name: string
+  picto: string
+  position: [number, number]
+  userPosition?: LatLng
+}
+
 class Game {
-  constructor(points) {
+  finished: boolean
+  points: GamePoint[]
+  guessingPoints: GamePoint[]
+  startPoints: GamePoint[]
+  map: Map
+  mapBackground: TileLayer
+  gameOverlays: LayerGroup
+  markers: LayerGroup
+  currentPointIndex: number
+  mesh?: Layer
+
+  constructor(points: GamePoint[]) {
     this.points = points
+    this.startPoints = []
+    this.guessingPoints = []
     this.finished = true
-    this.createMap()
-
-    L.DomEvent.on(getId('startButton'), 'click', () => {
-      this.initGame()
-    })
-    L.DomEvent.on(getId('replayButton'), 'click', () => {
-      this.initGame()
-    })
-    L.DomEvent.on(getId('finishButton'), 'click', () => {
-      this.validateInput()
-    })
-  }
-
-  createMap() {
+    this.currentPointIndex = -1
     this.mapBackground = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       className: 'mapBackground',
       attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
@@ -42,6 +49,7 @@ class Game {
       zoom: 12,
     })
       .addControl(
+        /* @ts-ignore */
         L.control.graphicScale({
           fill: 'fill',
           showSubunits: true,
@@ -57,6 +65,16 @@ class Game {
       })
 
     this.gameOverlays = L.layerGroup().addTo(this.map)
+    this.markers = L.layerGroup()
+    L.DomEvent.on(getId('startButton'), 'click', () => {
+      this.initGame()
+    })
+    L.DomEvent.on(getId('replayButton'), 'click', () => {
+      this.initGame()
+    })
+    L.DomEvent.on(getId('finishButton'), 'click', () => {
+      this.validateInput()
+    })
   }
 
   initGame() {
@@ -70,10 +88,7 @@ class Game {
     this.startPoints = startPoints
     this.guessingPoints = guessingPoints
 
-    this.map.fitBounds(
-      this.points.map(p => p.position),
-      { padding: [100, 100] }
-    )
+    this.fitMap()
     startPoints.forEach(startPoint => {
       this.createMarker(startPoint, true).addTo(this.markers)
     })
@@ -87,7 +102,9 @@ class Game {
   }
 
   drawMesh() {
-    const points = featureCollection(this.markers.getLayers().map(marker => marker.toGeoJSON()))
+    const points = featureCollection(
+      this.markers.getLayers().map(marker => (marker as Marker).toGeoJSON())
+    )
     const mesh = tin(points)
     if (this.mesh) {
       this.gameOverlays.removeLayer(this.mesh)
@@ -102,7 +119,7 @@ class Game {
     }).addTo(this.gameOverlays)
   }
 
-  preparePoints(points, nbStart) {
+  preparePoints(points: GamePoint[], nbStart: number) {
     const shuffledPoints = shuffleArray(points)
     return {
       startPoints: shuffledPoints.slice(0, nbStart),
@@ -121,13 +138,13 @@ class Game {
     }
   }
 
-  placePoint(pointDefinition, clickedPosition) {
+  placePoint(pointDefinition: GamePoint, clickedPosition: LatLng) {
     pointDefinition.userPosition = clickedPosition
     this.createMarker(pointDefinition, false).addTo(this.markers)
     this.drawMesh()
   }
 
-  getIcon(pointDefinition, isStarting) {
+  getIcon(pointDefinition: GamePoint, isStarting?: boolean) {
     return L.divIcon({
       className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
       iconSize: [60, 60],
@@ -136,8 +153,8 @@ class Game {
     })
   }
 
-  createMarker(pointDef, isStarting) {
-    return L.marker(isStarting ? pointDef.position : pointDef.userPosition, {
+  createMarker(pointDef: GamePoint, isStarting?: boolean) {
+    return L.marker(isStarting ? pointDef.position : pointDef.userPosition || [0, 0], {
       icon: this.getIcon(pointDef, isStarting),
       draggable: !isStarting,
     })
@@ -159,7 +176,7 @@ class Game {
 
     disableInteractivity(this.map)
     this.markers.eachLayer(m => {
-      m.dragging.disable()
+      ;(m as Marker).dragging?.disable()
     })
     this.mapBackground.setOpacity(0.75)
 
@@ -171,7 +188,7 @@ class Game {
     enableInteractivity(this.map)
   }
 
-  checkPlace(place) {
+  checkPlace(place: GamePoint) {
     return new Promise(resolve => {
       setTimeout(() => {
         const distanceLine = L.polyline([place.userPosition], {
@@ -179,7 +196,10 @@ class Game {
           color: 'blue',
         })
           .bindTooltip(
-            line => formatDistance(last(line.getLatLngs()).distanceTo(place.userPosition)),
+            line =>
+              formatDistance(
+                last((line as Polyline).getLatLngs() as LatLng[]).distanceTo(place.userPosition)
+              ),
             {
               className: 'distanceTooltip',
               permanent: true,
@@ -189,8 +209,8 @@ class Game {
           .addTo(this.gameOverlays)
         const fullDistance = place.userPosition.distanceTo(place.position)
         animatePoint(
-          place.userPosition,
-          place.position,
+          place.userPosition || L.latLng([0, 0]),
+          L.latLng(place.position),
           this.getAnimationDuration(fullDistance),
           (p, isFinished) => {
             distanceLine.addLatLng(p).openTooltip(p)
@@ -204,12 +224,9 @@ class Game {
     })
   }
 
-  getAnimationDuration(distance) {
-    if (DEBUG) {
-      return 0
-    }
+  getAnimationDuration(distance: number) {
     // duration proportional to distance, with max 3s, min 1/2s
-    return Math.min(3000, Math.max(distance, 500))
+    return clamp(distance, 500, 3000)
   }
 
   showDialog(content) {
@@ -237,20 +254,24 @@ class Game {
     this.showDialog(getId('endMessage'))
   }
 
-  showScoreScreen() {
+  fitMap() {
     this.map.flyToBounds(
       this.points.map(p => p.position),
       { padding: [100, 100] }
     )
+  }
+
+  showScoreScreen() {
+    this.fitMap()
 
     const totalDistance = this.guessingPoints
       .map(pt => pt.userPosition.distanceTo(pt.position))
       .reduce((sum, points) => sum + points, 0)
-    getId('finalScore').innerHTML = Math.round(totalDistance) + ' m'
+    getId('finalScore').innerHTML = formatDistance(totalDistance)
     this.showDialog(getId('scoreMessage'))
   }
 
-  showCurrentPoint(point) {
+  showCurrentPoint(point: GamePoint) {
     this.showDialog(`<img class="previewPicto" src="pictos/${point.picto}" /><br />
             Placez <b>${point.name}</b>`)
   }
@@ -260,7 +281,7 @@ window.onload = function () {
   fetch('points.json')
     .then(response => response.json())
     .then(points => {
-      const game = new Game(points)
+      const game = new Game(points as GamePoint[])
       game.showStartScreen()
     })
 }
