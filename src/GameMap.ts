@@ -1,4 +1,12 @@
-import L, { LayerGroup, LeafletMouseEvent, Map, MapOptions, Marker, TileLayer } from 'leaflet'
+import L, {
+  LatLngExpression,
+  LayerGroup,
+  LeafletMouseEvent,
+  Map,
+  MapOptions,
+  Marker,
+  TileLayer,
+} from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
 import { animatePoint, formatDistance, last, clamp } from './utils'
 // import tin from '@turf/tin'
@@ -66,7 +74,7 @@ class GameMap {
       .on('dragend', evt => {
         point.userPosition = evt.target.getLatLng()
       })
-      .addTo(this.map)
+      .addTo(this.markers)
     // .on('drag', () => {
     //   this.drawMesh()
     // })
@@ -80,6 +88,11 @@ class GameMap {
 
   clear() {
     this.markers.clearLayers()
+  }
+
+  fit(points?: LatLngExpression[]) {
+    const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
+    this.map.flyToBounds(L.latLngBounds(coords), { padding: [100, 100] })
   }
 
   checkPlace(place: GamePoint) {

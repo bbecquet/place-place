@@ -59,10 +59,10 @@ class Game {
     this.finished = false
     this.currentPointIndex = -1
 
-    // this.fitMap()
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint, true)
     })
+    this.map.fit()
 
     this.map.setCursor('crosshair')
 
@@ -135,16 +135,8 @@ class Game {
     this.showDialog(getId('endMessage'))
   }
 
-  fitMap() {
-    // TODO in map
-    // this.map.flyToBounds(
-    //   this.points.map(p => p.position),
-    //   { padding: [100, 100] }
-    // )
-  }
-
   showScoreScreen() {
-    this.fitMap()
+    this.map.fit()
 
     const totalDistance = this.guessingPoints
       .map(pt => pt.userPosition.distanceTo(pt.position))
