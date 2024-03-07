@@ -150,7 +150,10 @@ class GameMap {
           L.latLng(place.position),
           duration,
           (p, isFinished) => {
-            distanceLine.addLatLng(p).openTooltip(p)
+            distanceLine
+              .addLatLng(p)
+              .openTooltip(p)
+              .setStyle({ color: this.distanceToColor(p.distanceTo(place.userPosition)) })
 
             if (isFinished) {
               setTimeout(resolve, 1000)
@@ -159,6 +162,20 @@ class GameMap {
         )
       }, 1000)
     })
+  }
+
+  // TODO: use a gradient generator
+  distanceToColor(distance: number) {
+    if (distance < 500) {
+      return 'blue'
+    }
+    if (distance < 1000) {
+      return 'green'
+    }
+    if (distance < 2000) {
+      return 'orange'
+    }
+    return 'red'
   }
 
   drawMesh() {

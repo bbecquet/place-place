@@ -35,9 +35,21 @@ body {
   z-index: 1000;
 }
 
+main {
+  display: flex;
+  height: 100%;
+}
+
 #map {
+  flex-grow: 1;
   width: 100%;
   height: 100%;
+}
+
+#panel {
+  flex-basis: 400px;
+  padding: 1rem;
+  border-left: 1px solid black;
 }
 
 .leaflet-container {
@@ -88,7 +100,7 @@ body {
 .distanceTooltip {
   border: 0;
   box-shadow: none;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: bold;
   color: var(--front);
 }

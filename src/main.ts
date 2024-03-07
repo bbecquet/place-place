@@ -48,7 +48,7 @@ class Game {
   }
 
   initGame() {
-    L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden')
+    L.DomUtil.addClass(L.DomUtil.get('panel'), 'hidden')
 
     this.map.toggleBackground(false)
     this.map.clear()
@@ -95,7 +95,7 @@ class Game {
 
   async validateInput() {
     // this.gameOverlays.removeLayer(this.mesh)
-    L.DomUtil.addClass(L.DomUtil.get('dialog'), 'hidden')
+    L.DomUtil.addClass(L.DomUtil.get('panel'), 'hidden')
 
     this.map.freezeInput()
 
@@ -110,7 +110,7 @@ class Game {
   }
 
   showDialog(content) {
-    const dialog = getId('dialog')
+    const dialog = getId('panel')
     if (dialog.hasChildNodes() && dialog.dataset.saveNode) {
       getId('hide').appendChild(dialog.firstChild)
     } else {
