@@ -91,7 +91,6 @@ class Game {
   placePoint(pointDefinition: GamePoint, clickedPosition: LatLng) {
     pointDefinition.userPosition = clickedPosition
     this.map.createMarker(pointDefinition, false)
-    // this.drawMesh()
   }
 
   async validateInput() {

@@ -1,5 +1,6 @@
 import L, {
   LatLngExpression,
+  Layer,
   LayerGroup,
   LeafletMouseEvent,
   Map,
@@ -9,15 +10,15 @@ import L, {
 } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
 import { animatePoint, formatDistance, last, clamp } from './utils'
-// import tin from '@turf/tin'
-// import { featureCollection } from '@turf/helpers'
+import tin from '@turf/tin'
+import { featureCollection } from '@turf/helpers'
 import { GamePoint } from './types'
 
 class GameMap {
   map: Map
   background: TileLayer
   markers: LayerGroup
-  // mesh?: Layer
+  mesh?: Layer
 
   constructor(
     element: string | HTMLElement,
@@ -66,7 +67,7 @@ class GameMap {
       html: `<div style="background-image: url(pictos/${point.picto});"></div>`,
     })
 
-    return L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
+    L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
       icon,
       draggable: !isStarting,
     })
@@ -76,9 +77,11 @@ class GameMap {
         point.userPosition = evt.target.getLatLng()
       })
       .addTo(this.markers)
-    // .on('drag', () => {
-    //   this.drawMesh()
-    // })
+      .on('drag', () => {
+        this.drawMesh()
+      })
+
+    this.drawMesh()
   }
 
   freezeMarkers() {
@@ -89,6 +92,10 @@ class GameMap {
 
   clear() {
     this.markers.clearLayers()
+    if (this.mesh) {
+      this.mesh.remove()
+      this.mesh = undefined
+    }
   }
 
   fit(points?: LatLngExpression[]) {
@@ -136,22 +143,22 @@ class GameMap {
     })
   }
 
-  // drawMesh() {
-  //   const mesh = tin(featureCollection(
-  //     this.markers.getLayers().map(marker => (marker as Marker).toGeoJSON())
-  //   ))
-  //   if (this.mesh) {
-  //     this.gameOverlays.removeLayer(this.mesh)
-  //   }
-  //   this.mesh = L.geoJSON(mesh, {
-  //     style: () => ({
-  //       fillOpacity: 0,
-  //       weight: 1,
-  //       color: 'silver',
-  //       dashArray: '2,2',
-  //     }),
-  //   }).addTo(this.gameOverlays)
-  // }
+  drawMesh() {
+    const mesh = tin(
+      featureCollection(this.markers.getLayers().map(marker => (marker as Marker).toGeoJSON()))
+    )
+    if (this.mesh) {
+      this.mesh.remove()
+    }
+    this.mesh = L.geoJSON(mesh, {
+      style: () => ({
+        fillOpacity: 0,
+        weight: 1,
+        color: 'silver',
+        dashArray: '2,2',
+      }),
+    }).addTo(this.map)
+  }
 }
 
 export default GameMap
