@@ -147,25 +147,20 @@ class GameMap {
         // duration proportional to distance, with max 2s, min 1/2s
         const duration = clamp(fullDistance, 500, 2000)
 
-        animatePoint(
-          place.userPosition || L.latLng([0, 0]),
-          L.latLng(place.position),
-          duration,
-          (p, isFinished) => {
-            const dist = p.distanceTo(place.userPosition)
-            const color = this.distanceToColor(dist)
+        animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
+          const dist = p.distanceTo(place.userPosition)
+          const color = this.distanceToColor(dist)
 
-            realPositionMarker
-              .setLatLng(p)
-              .setTooltipContent(formatDistance(dist))
-              .setStyle({ fillColor: color })
-            distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
+          realPositionMarker
+            .setLatLng(p)
+            .setTooltipContent(formatDistance(dist))
+            .setStyle({ fillColor: color })
+          distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
 
-            if (isFinished) {
-              setTimeout(resolve, 1000)
-            }
+          if (isFinished) {
+            setTimeout(resolve, 1000)
           }
-        )
+        })
       }, 1000)
     })
   }

@@ -140,7 +140,12 @@ window.onload = function () {
   fetch('points.json')
     .then(response => response.json())
     .then(points => {
-      const game = new Game(points as GamePoint[])
+      const game = new Game(
+        points.map((pt: Omit<GamePoint, 'userPosition'>) => ({
+          ...pt,
+          userPosition: L.latLng([0, 0]),
+        })) as GamePoint[]
+      )
       game.showStartScreen()
     })
 }
