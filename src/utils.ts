@@ -38,7 +38,12 @@ export function animatePoint(
   requestAnimationFrame(animationFrame)
 }
 
-export const formatDistance = (meters: number) => `${Math.round(meters / 10) * 10} m`
+export const formatDistance = (meters: number, short?: boolean) => {
+  if (short && meters > 1000) {
+    return `${(meters / 1000).toFixed(1)} km`
+  }
+  return `${Math.round(meters / 10) * 10} m`
+}
 
 export const shuffleArray = <T>(array: Array<T>) => {
   const a = array.slice()

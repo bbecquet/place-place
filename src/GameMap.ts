@@ -157,7 +157,7 @@ class GameMap {
           realPositionMarker
             .setLatLng(p)
             .setTooltipContent(
-              `<div class="content" style="--color: ${color}">${formatDistance(dist)}</div>`
+              `<div class="content" style="--color: ${color}">${formatDistance(dist, true)}</div>`
             )
             .setStyle({ fillColor: color })
           distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
@@ -187,7 +187,7 @@ class GameMap {
       this.mesh.addLayer(
         L.polyline(latLngs, meshStyle)
           /* @ts-ignore leaflet-path doesn't have Typescript declarations */
-          .setText(formatDistance(latLngs[0].distanceTo(latLngs[1])), {
+          .setText(formatDistance(latLngs[0].distanceTo(latLngs[1]), true), {
             center: true,
           })
       )
