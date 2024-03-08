@@ -128,18 +128,19 @@ class GameMap {
         const distanceLine = L.polyline([place.userPosition], {
           dashArray: '5,10',
           color: 'blue',
+        }).addTo(this.markers)
+
+        const realPositionMarker = L.circleMarker(place.userPosition, {
+          radius: 8,
+          fillOpacity: 1,
+          stroke: false,
+          fillColor: 'blue',
         })
-          .bindTooltip(
-            line =>
-              formatDistance(
-                last((line as Polyline).getLatLngs() as LatLng[]).distanceTo(place.userPosition)
-              ),
-            {
-              className: 'distanceTooltip',
-              permanent: true,
-              direction: 'top',
-            }
-          )
+          .bindTooltip('', {
+            className: 'distanceTooltip',
+            permanent: true,
+            direction: 'top',
+          })
           .addTo(this.markers)
 
         const fullDistance = place.userPosition.distanceTo(place.position)
@@ -151,10 +152,14 @@ class GameMap {
           L.latLng(place.position),
           duration,
           (p, isFinished) => {
-            distanceLine
-              .addLatLng(p)
-              .openTooltip(p)
-              .setStyle({ color: this.distanceToColor(p.distanceTo(place.userPosition)) })
+            const dist = p.distanceTo(place.userPosition)
+            const color = this.distanceToColor(dist)
+
+            realPositionMarker
+              .setLatLng(p)
+              .setTooltipContent(formatDistance(dist))
+              .setStyle({ fillColor: color })
+            distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
 
             if (isFinished) {
               setTimeout(resolve, 1000)
