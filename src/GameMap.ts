@@ -5,6 +5,7 @@ import L, {
   Map,
   MapOptions,
   Marker,
+  Polyline,
   TileLayer,
 } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
@@ -116,9 +117,9 @@ class GameMap {
       points ||
       this.markers
         .getLayers()
-        .filter(layer => !!layer.getLatLng)
+        .filter(layer => !!layer.getLatLng) // Dirty way of getting only Marker objects
         .map(m => (m as Marker).getLatLng())
-    this.map.flyToBounds(L.latLngBounds(coords), { padding: [100, 100] })
+    this.map.flyToBounds(L.latLngBounds(coords), { padding: [150, 150] })
   }
 
   checkPlace(place: GamePoint) {

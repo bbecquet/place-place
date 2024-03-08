@@ -6,6 +6,16 @@ import { GamePoint } from './types'
 
 const getId = L.DomUtil.get
 
+function setPanel(content: string | Node | null) {
+  const panel = getId('panel') as HTMLElement
+  if (typeof content === 'string') {
+    panel.innerHTML = content
+  } else {
+    L.DomUtil.empty(panel)
+    panel.appendChild(content)
+  }
+}
+
 class Game {
   points: GamePoint[]
   guessingPoints: GamePoint[]
@@ -48,8 +58,6 @@ class Game {
   }
 
   initGame() {
-    L.DomUtil.addClass(L.DomUtil.get('panel'), 'hidden')
-
     this.map.toggleBackground(false)
     this.map.clear()
 
@@ -94,9 +102,6 @@ class Game {
   }
 
   async validateInput() {
-    // this.gameOverlays.removeLayer(this.mesh)
-    L.DomUtil.addClass(L.DomUtil.get('panel'), 'hidden')
-
     this.map.freezeInput()
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
@@ -109,29 +114,12 @@ class Game {
     this.showScoreScreen()
   }
 
-  showDialog(content) {
-    const dialog = getId('panel')
-    if (dialog.hasChildNodes() && dialog.dataset.saveNode) {
-      getId('hide').appendChild(dialog.firstChild)
-    } else {
-      L.DomUtil.empty(dialog)
-    }
-    if (typeof content === 'string') {
-      dialog.innerHTML = content
-      dialog.dataset.saveNode = ''
-    } else {
-      dialog.appendChild(content)
-      dialog.dataset.saveNode = 'true'
-    }
-    dialog.classList.remove('hidden')
-  }
-
   showStartScreen() {
-    this.showDialog(getId('startMessage'))
+    setPanel(getId('startMessage'))
   }
 
   showEndMessage() {
-    this.showDialog(getId('endMessage'))
+    setPanel(getId('endMessage'))
   }
 
   showScoreScreen() {
@@ -139,11 +127,11 @@ class Game {
       .map(pt => pt.userPosition.distanceTo(pt.position))
       .reduce((sum, points) => sum + points, 0)
     getId('finalScore').innerHTML = formatDistance(totalDistance)
-    this.showDialog(getId('scoreMessage'))
+    setPanel(getId('scoreMessage'))
   }
 
   showCurrentPoint(point: GamePoint) {
-    this.showDialog(`<img class="previewPicto" src="pictos/${point.picto}" /><br />
+    setPanel(`<img class="previewPicto" src="pictos/${point.picto}" /><br />
             Placez <b>${point.name}</b>`)
   }
 }
