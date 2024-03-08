@@ -83,7 +83,7 @@ class GameMap {
     const icon = L.divIcon({
       className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
       iconSize: [60, 60],
-      iconAnchor: [30, 60],
+      iconAnchor: [30, 70],
       html: `<div style="background-image: url(pictos/${point.picto});"></div>`,
     })
 
