@@ -70,7 +70,6 @@ class Game {
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint, true)
     })
-    this.map.fit()
 
     this.map.setCursor('crosshair')
 
@@ -102,13 +101,13 @@ class Game {
   }
 
   async validateInput() {
+    this.map.fit()
     this.map.freezeInput()
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
       await this.map.checkPlace(this.guessingPoints[i])
     }
 
-    this.map.fit()
     this.map.toggleInteractivity(true)
 
     this.showScoreScreen()

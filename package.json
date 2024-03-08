@@ -30,6 +30,8 @@
     "@turf/helpers": "^6.5.0",
     "@turf/meta": "^6.5.0",
     "@turf/tin": "^6.5.0",
+    "@types/d3-interpolate": "^3.0.4",
+    "d3-interpolate": "^3.0.1",
     "leaflet": "^1.9.4",
     "leaflet-textpath": "^1.2.3"
   }

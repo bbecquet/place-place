@@ -99,10 +99,14 @@ main {
 
 .distanceTooltip {
   border: 0;
+  background: transparent;
   box-shadow: none;
   font-size: 1rem;
   font-weight: bold;
-  color: var(--front);
+}
+
+.distanceTooltip .content {
+  color: var(--color, --front);
 }
 
 .distanceTooltip:before {

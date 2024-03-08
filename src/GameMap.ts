@@ -15,12 +15,15 @@ import { featureCollection } from '@turf/helpers'
 import { segmentEach } from '@turf/meta'
 import { GamePoint } from './types'
 import { animatePoint, formatDistance, last, clamp } from './utils'
+import { interpolateRgbBasis } from 'd3-interpolate'
 
 const meshStyle = {
   weight: 1,
   color: 'silver',
   dashArray: '2,2',
 }
+
+const distanceRatioToColor = interpolateRgbBasis(['lightGreen', 'orange', 'red'])
 
 class GameMap {
   map: Map
@@ -149,11 +152,13 @@ class GameMap {
 
         animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
           const dist = p.distanceTo(place.userPosition)
-          const color = this.distanceToColor(dist)
+          const color = distanceRatioToColor(dist / 3000)
 
           realPositionMarker
             .setLatLng(p)
-            .setTooltipContent(formatDistance(dist))
+            .setTooltipContent(
+              `<div class="content" style="--color: ${color}">${formatDistance(dist)}</div>`
+            )
             .setStyle({ fillColor: color })
           distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
 
@@ -163,20 +168,6 @@ class GameMap {
         })
       }, 1000)
     })
-  }
-
-  // TODO: use a gradient generator
-  distanceToColor(distance: number) {
-    if (distance < 500) {
-      return 'blue'
-    }
-    if (distance < 1000) {
-      return 'green'
-    }
-    if (distance < 2000) {
-      return 'orange'
-    }
-    return 'red'
   }
 
   drawMesh() {
