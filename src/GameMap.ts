@@ -5,7 +5,6 @@ import L, {
   Map,
   MapOptions,
   Marker,
-  Polyline,
   TileLayer,
 } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
