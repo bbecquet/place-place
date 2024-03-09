@@ -93,6 +93,7 @@ class GameMap {
     L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
       icon,
       draggable: !isStarting,
+      autoPan: true,
     })
       .bindTooltip(point.name, { direction: 'bottom', offset: [0, 10], permanent: isStarting })
       .on('dragend', evt => {
