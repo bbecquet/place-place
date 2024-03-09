@@ -30,6 +30,7 @@ class GameMap {
   background: TileLayer
   markers: LayerGroup
   mesh: LayerGroup
+  results: LayerGroup
 
   constructor(
     element: string | HTMLElement,
@@ -42,6 +43,7 @@ class GameMap {
     })
     this.markers = L.layerGroup()
     this.mesh = L.layerGroup()
+    this.results = L.layerGroup()
 
     /* @ts-ignore no TS declaration for this */
     const scale = L.control.graphicScale({
@@ -54,6 +56,7 @@ class GameMap {
       .addLayer(this.background)
       .addLayer(this.markers)
       .addLayer(this.mesh)
+      .addLayer(this.results)
       .on('click', onClick)
   }
 
@@ -113,15 +116,11 @@ class GameMap {
   clear() {
     this.markers.clearLayers()
     this.mesh.clearLayers()
+    this.results.clearLayers()
   }
 
   fit(points?: LatLngExpression[]) {
-    const coords =
-      points ||
-      this.markers
-        .getLayers()
-        .filter(layer => !!layer.getLatLng) // Dirty way of getting only Marker objects
-        .map(m => (m as Marker).getLatLng())
+    const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
     this.map.flyToBounds(L.latLngBounds(coords), { padding: [150, 150] })
   }
 
@@ -131,7 +130,7 @@ class GameMap {
         const distanceLine = L.polyline([place.userPosition], {
           dashArray: '5,10',
           color: 'blue',
-        }).addTo(this.markers)
+        }).addTo(this.results)
 
         const realPositionMarker = L.circleMarker(place.userPosition, {
           radius: 8,
@@ -144,7 +143,7 @@ class GameMap {
             permanent: true,
             direction: 'top',
           })
-          .addTo(this.markers)
+          .addTo(this.results)
 
         const fullDistance = place.userPosition.distanceTo(place.position)
         // duration proportional to distance, with max 2s, min 1/2s
