@@ -5,6 +5,7 @@ import L, {
   Map,
   MapOptions,
   Marker,
+  PointExpression,
   TileLayer,
 } from 'leaflet'
 import '@kalisio/leaflet-graphicscale'
@@ -13,7 +14,7 @@ import tin from '@turf/tin'
 import { featureCollection } from '@turf/helpers'
 import { segmentEach } from '@turf/meta'
 import { GamePoint } from './types'
-import { animatePoint, formatDistance, last, clamp } from './utils'
+import { animatePoint, formatDistance, clamp, isMobile } from './utils'
 import { interpolateRgbBasis } from 'd3-interpolate'
 
 const meshStyle = {
@@ -120,7 +121,8 @@ class GameMap {
 
   fit(points?: LatLngExpression[]) {
     const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
-    this.map.flyToBounds(L.latLngBounds(coords), { padding: [150, 150] })
+    const padding: PointExpression = isMobile() ? [50, 50] : [150, 150]
+    this.map.flyToBounds(L.latLngBounds(coords), { padding }) // smaller padding on small screen
   }
 
   checkPlace(place: GamePoint) {
