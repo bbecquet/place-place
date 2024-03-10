@@ -33,7 +33,7 @@ main {
 }
 
 #panel {
-  flex-basis: 400px;
+  /* flex-basis: 400px; */
   padding: 1rem;
   border-top: 1px solid black;
 }
@@ -44,6 +44,7 @@ main {
   }
 
   #panel {
+    flex-basis: 500px;
     border: 0;
     border-left: 1px solid black;
   }
@@ -166,4 +167,14 @@ button:hover {
 
 .pointNameTooltip::before {
   display: none;
+}
+
+li.pointScore {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pointScore .dist {
+  color: var(--color, black);
 }

@@ -55,7 +55,7 @@ class Game {
       this.map.createMarker(startPoint, true)
     })
 
-    this.map.fit()
+    this.map.fit(undefined, true)
     this.map.setCursor('crosshair')
 
     this.advancePoint()
@@ -88,9 +88,13 @@ class Game {
   async validateInput() {
     this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
     this.map.freezeInput()
+    this.panel.setMessage('scoring')
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
-      await this.map.checkPlace(this.guessingPoints[i])
+      const point = this.guessingPoints[i]
+      await this.map.checkPlace(point, (dist, color) =>
+        this.panel.updateScoringDistance(point, dist, color)
+      )
     }
 
     this.map.toggleInteractivity(true)

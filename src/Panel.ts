@@ -26,7 +26,7 @@ class Panel {
     }
   }
 
-  setMessage(status: 'new' | 'lastPoint') {
+  setMessage(status: 'new' | 'lastPoint' | 'scoring') {
     if (status === 'new') {
       this._setContent(`
         <p>Ceci est une carte de Paris</p>
@@ -37,6 +37,8 @@ class Panel {
         <p>Vous pouvez encore changer la position des points</p>
         <button id="finishButton">Terminer</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
+    } else if (status === 'scoring') {
+      this._setContent(`<p>Résultats :</p><ul id="pointScores"></ul>`)
     }
   }
 
@@ -47,12 +49,29 @@ class Panel {
   }
 
   setScore(score: number) {
-    this._setContent(`
+    this.panel.innerHTML += `
         Score final :
         <div id="finalScore">${formatDistance(score)}</div>
         <button id="replayButton">Rejouer</button>
-    `)
+    `
     document.getElementById('replayButton')?.addEventListener('click', this.onStart)
+  }
+
+  updateScoringDistance(point: GamePoint, distance: number, color: string) {
+    let dist = document.querySelector('#pointScore_' + point.id + ' .dist')
+    if (!dist) {
+      const list = document.getElementById('pointScores') as HTMLElement
+      const li = document.createElement('li')
+      li.id = 'pointScore_' + point.id
+      li.className = 'pointScore'
+      dist = document.createElement('div')
+      dist.className = 'dist'
+      li.innerHTML = `<div>${point.name}</div>`
+      li.appendChild(dist)
+      list.appendChild(li)
+    }
+    ;(dist as HTMLElement).style.cssText = '--color:' + color
+    dist.innerHTML = formatDistance(distance, true)
   }
 }
 

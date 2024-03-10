@@ -23,7 +23,7 @@ const meshStyle = {
   dashArray: '2,2',
 }
 
-const distanceRatioToColor = interpolateRgbBasis(['lightGreen', 'orange', 'red'])
+const distanceRatioToColor = interpolateRgbBasis(['green', 'orange', 'red'])
 
 class GameMap {
   map: Map
@@ -32,6 +32,7 @@ class GameMap {
   mesh: LayerGroup
   results: LayerGroup
   iconSize: number
+  pointToMarker: Record<string, Marker>
 
   constructor(
     element: HTMLElement,
@@ -60,7 +61,8 @@ class GameMap {
       .addLayer(this.results)
       .on('click', onClick)
 
-    this.iconSize = isMobile() ? 40 : 60
+    this.iconSize = isMobile() ? 40 : 50
+    this.pointToMarker = {}
   }
 
   toggleBackground(active: boolean) {
@@ -93,7 +95,7 @@ class GameMap {
       html: `<div style="background-image: url(${point.picto});"></div>`,
     })
 
-    L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
+    const marker = L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
       icon,
       draggable: !isStarting,
       autoPan: true,
@@ -113,6 +115,8 @@ class GameMap {
         this.drawMesh()
       })
 
+    this.pointToMarker[point.id] = marker
+
     this.drawMesh()
   }
 
@@ -126,15 +130,19 @@ class GameMap {
     this.markers.clearLayers()
     this.mesh.clearLayers()
     this.results.clearLayers()
+    this.pointToMarker = {}
   }
 
-  fit(points?: LatLngExpression[]) {
+  fit(points?: LatLngExpression[], disableAnimation?: boolean) {
     const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
     const padding: PointExpression = isMobile() ? [50, 50] : [150, 150]
-    this.map.flyToBounds(L.latLngBounds(coords), { padding }) // smaller padding on small screen
+    this.map.flyToBounds(L.latLngBounds(coords), {
+      padding,
+      animate: disableAnimation !== undefined && true ? false : undefined,
+    })
   }
 
-  checkPlace(place: GamePoint) {
+  checkPlace(place: GamePoint, onUpdateDistance?: (distance: number, color: string) => void) {
     return new Promise(resolve => {
       setTimeout(() => {
         const distanceLine = L.polyline([place.userPosition], {
@@ -142,7 +150,7 @@ class GameMap {
           color: 'blue',
         }).addTo(this.results)
 
-        const realPositionMarker = L.circleMarker(place.userPosition, {
+        const fixedUserPositionMarker = L.circleMarker(place.userPosition, {
           radius: 8,
           fillOpacity: 1,
           stroke: false,
@@ -158,18 +166,24 @@ class GameMap {
         const fullDistance = place.userPosition.distanceTo(place.position)
         // duration proportional to distance, with max 2s, min 1/2s
         const duration = clamp(fullDistance, 500, 1500)
+        const pointMarker = this.pointToMarker[place.id]
 
         animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
           const dist = p.distanceTo(place.userPosition)
           const color = distanceRatioToColor(dist / 3000)
 
-          realPositionMarker
-            .setLatLng(p)
+          pointMarker.setLatLng(p)
+
+          fixedUserPositionMarker
             .setTooltipContent(
               `<div class="content" style="--color: ${color}">${formatDistance(dist, true)}</div>`
             )
             .setStyle({ fillColor: color })
           distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
+
+          if (onUpdateDistance) {
+            onUpdateDistance(dist, color)
+          }
 
           if (isFinished) {
             setTimeout(resolve, 1000)
