@@ -31,6 +31,7 @@ class GameMap {
   markers: LayerGroup
   mesh: LayerGroup
   results: LayerGroup
+  iconSize: number
 
   constructor(
     element: string | HTMLElement,
@@ -58,6 +59,8 @@ class GameMap {
       .addLayer(this.mesh)
       .addLayer(this.results)
       .on('click', onClick)
+
+    this.iconSize = isMobile() ? 40 : 60
   }
 
   toggleBackground(active: boolean) {
@@ -85,8 +88,8 @@ class GameMap {
   createMarker(point: GamePoint, isStarting?: boolean) {
     const icon = L.divIcon({
       className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
-      iconSize: [60, 60],
-      iconAnchor: [30, 70],
+      iconSize: [this.iconSize, this.iconSize],
+      iconAnchor: [this.iconSize / 2, this.iconSize + 10],
       html: `<div style="background-image: url(pictos/${point.picto});"></div>`,
     })
 
@@ -98,7 +101,7 @@ class GameMap {
       .bindTooltip(point.name + (isStarting ? ' 🔒' : ''), {
         className: 'pointNameTooltip',
         direction: 'top',
-        offset: [0, -60],
+        offset: [0, -this.iconSize],
         permanent: isStarting,
       })
       .on('dragend', evt => {
