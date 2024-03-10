@@ -20,21 +20,6 @@ body {
   font-size: 18px;
 }
 
-#dialog {
-  position: absolute;
-  margin: 15px;
-  top: 0;
-  right: 0;
-  min-width: 400px;
-  height: auto;
-  border-radius: 3px;
-  text-align: center;
-  padding: 20px;
-  box-shadow: 0 3px 10px gray;
-  background-color: white;
-  z-index: 1000;
-}
-
 main {
   height: 100%;
   display: flex;
@@ -99,7 +84,7 @@ main {
 
 .gameMarker.startingPoint div,
 .gameMarker.startingPoint:after {
-  filter: hue-rotate(90deg);
+  filter: grayscale(1) contrast(100%);
 }
 
 .gameMarker:not(.startingPoint) {
@@ -109,7 +94,7 @@ main {
 
 .gameMarker.startingPoint {
   cursor: not-allowed;
-  border-color: red;
+  border-color: black;
 }
 
 .previewPicto {
@@ -127,7 +112,8 @@ main {
 
 .distanceTooltip {
   border: 0;
-  background: transparent;
+  background-color: white;
+  padding: 3px;
   box-shadow: none;
   font-size: 1rem;
   font-weight: bold;
@@ -138,10 +124,6 @@ main {
 }
 
 .distanceTooltip:before {
-  display: none;
-}
-
-.hidden {
   display: none;
 }
 

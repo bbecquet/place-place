@@ -34,7 +34,7 @@ class GameMap {
   iconSize: number
 
   constructor(
-    element: string | HTMLElement,
+    element: HTMLElement,
     options: MapOptions,
     onClick: (evt: LeafletMouseEvent) => void
   ) {
@@ -157,7 +157,7 @@ class GameMap {
 
         const fullDistance = place.userPosition.distanceTo(place.position)
         // duration proportional to distance, with max 2s, min 1/2s
-        const duration = clamp(fullDistance, 500, 2000)
+        const duration = clamp(fullDistance, 500, 1500)
 
         animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
           const dist = p.distanceTo(place.userPosition)

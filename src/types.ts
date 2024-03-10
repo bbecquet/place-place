@@ -6,3 +6,8 @@ export type GamePoint = {
   position: [number, number]
   userPosition: LatLng
 }
+
+export type Game = {
+  place: string
+  points: GamePoint[]
+}

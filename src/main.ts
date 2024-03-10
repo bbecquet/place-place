@@ -1,26 +1,15 @@
 import L, { LatLng } from 'leaflet'
-import '@kalisio/leaflet-graphicscale'
-import { formatDistance, shuffleArray } from './utils'
-import GameMap from './GameMap'
+import { shuffleArray } from './utils'
 import { GamePoint } from './types'
-
-const getId = L.DomUtil.get
-
-function setPanel(content: string | Node | null) {
-  const panel = getId('panel') as HTMLElement
-  if (typeof content === 'string') {
-    panel.innerHTML = content
-  } else {
-    L.DomUtil.empty(panel)
-    panel.appendChild(content)
-  }
-}
+import GameMap from './GameMap'
+import Panel from './Panel'
 
 class Game {
   points: GamePoint[]
   guessingPoints: GamePoint[]
   startPoints: GamePoint[]
   map: GameMap
+  panel: Panel
   finished: boolean
   currentPointIndex: number
 
@@ -32,7 +21,7 @@ class Game {
     this.currentPointIndex = -1
 
     this.map = new GameMap(
-      'map',
+      document.getElementById('map') as HTMLElement,
       {
         center: [48.85, 2.35],
         zoom: 12,
@@ -46,14 +35,9 @@ class Game {
       }
     )
 
-    L.DomEvent.on(getId('startButton'), 'click', () => {
-      this.initGame()
-    })
-    L.DomEvent.on(getId('replayButton'), 'click', () => {
-      this.initGame()
-    })
-    L.DomEvent.on(getId('finishButton'), 'click', () => {
-      this.validateInput()
+    this.panel = new Panel(document.getElementById('panel') as HTMLElement, {
+      onStart: () => this.initGame(),
+      onEnd: () => this.validateInput(),
     })
   }
 
@@ -87,11 +71,11 @@ class Game {
   advancePoint() {
     this.currentPointIndex++
     if (this.currentPointIndex >= this.guessingPoints.length) {
-      this.showEndMessage()
       this.finished = true
+      this.panel.setMessage('lastPoint')
       this.map.setCursor('pointer')
     } else {
-      this.showCurrentPoint(this.guessingPoints[this.currentPointIndex])
+      this.panel.setPoint(this.guessingPoints[this.currentPointIndex])
     }
   }
 
@@ -110,28 +94,10 @@ class Game {
 
     this.map.toggleInteractivity(true)
 
-    this.showScoreScreen()
-  }
-
-  showStartScreen() {
-    setPanel(getId('startMessage'))
-  }
-
-  showEndMessage() {
-    setPanel(getId('endMessage'))
-  }
-
-  showScoreScreen() {
     const totalDistance = this.guessingPoints
       .map(pt => pt.userPosition.distanceTo(pt.position))
       .reduce((sum, points) => sum + points, 0)
-    getId('finalScore').innerHTML = formatDistance(totalDistance)
-    setPanel(getId('scoreMessage'))
-  }
-
-  showCurrentPoint(point: GamePoint) {
-    setPanel(`<img class="previewPicto" src="${point.picto}" alt="" /><br />
-            Cliquez pour placer <b>${point.name}</b>`)
+    this.panel.setScore(totalDistance)
   }
 }
 
@@ -139,12 +105,11 @@ window.onload = function () {
   fetch('points.json')
     .then(response => response.json())
     .then(points => {
-      const game = new Game(
+      new Game(
         points.map((pt: Omit<GamePoint, 'userPosition'>) => ({
           ...pt,
           userPosition: L.latLng([0, 0]),
         })) as GamePoint[]
       )
-      game.showStartScreen()
     })
 }
