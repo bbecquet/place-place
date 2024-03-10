@@ -90,7 +90,7 @@ class GameMap {
       className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
       iconSize: [this.iconSize, this.iconSize],
       iconAnchor: [this.iconSize / 2, this.iconSize + 10],
-      html: `<div style="background-image: url(pictos/${point.picto});"></div>`,
+      html: `<div style="background-image: url(${point.picto});"></div>`,
     })
 
     L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
