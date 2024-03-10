@@ -95,7 +95,7 @@ class GameMap {
       draggable: !isStarting,
       autoPan: true,
     })
-      .bindTooltip(point.name, {
+      .bindTooltip(point.name + (isStarting ? ' 🔒' : ''), {
         className: 'pointNameTooltip',
         direction: 'top',
         offset: [0, -60],
