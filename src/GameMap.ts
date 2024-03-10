@@ -191,7 +191,7 @@ class GameMap {
       }
     })
     const lines = Object.values(uniqueLines).map(line => line.map(pt => L.latLng(pt[1], pt[0])))
-    this.mesh.clearLayers()
+    this.mesh.clearLayers().addTo(this.map)
     lines.forEach(latLngs => {
       this.mesh.addLayer(
         L.polyline(latLngs, meshStyle)
