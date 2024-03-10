@@ -95,7 +95,12 @@ class GameMap {
       draggable: !isStarting,
       autoPan: true,
     })
-      .bindTooltip(point.name, { direction: 'bottom', offset: [0, 10], permanent: isStarting })
+      .bindTooltip(point.name, {
+        className: 'pointNameTooltip',
+        direction: 'top',
+        offset: [0, -60],
+        permanent: isStarting,
+      })
       .on('dragend', evt => {
         // TODO: avoid this on-place modification of the model
         point.userPosition = evt.target.getLatLng()

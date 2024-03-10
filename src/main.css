@@ -68,14 +68,24 @@ main {
   background-color: white;
 }
 
-.gameMarker div {
-  height: 100%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom center;
+.gameMarker {
+  border: 1px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 }
 
-.gameMarker:after {
+.gameMarker div {
+  height: 75%;
+  width: 75%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.gameMarker::after {
   content: '';
   display: block;
   width: 100%;
@@ -87,13 +97,19 @@ main {
   bottom: 0;
 }
 
+.gameMarker.startingPoint div,
+.gameMarker.startingPoint:after {
+  filter: hue-rotate(90deg);
+}
+
 .gameMarker:not(.startingPoint) {
   cursor: grab;
+  border-color: blue;
 }
 
 .gameMarker.startingPoint {
-  filter: hue-rotate(90deg);
   cursor: not-allowed;
+  border-color: red;
 }
 
 .previewPicto {
@@ -157,4 +173,15 @@ button:hover {
 
 .leaflet-control-graphicscale .division .line {
   height: 12px;
+}
+
+.pointNameTooltip {
+  background-color: black;
+  border: 0;
+  padding: 3px;
+  color: white;
+}
+
+.pointNameTooltip::before {
+  display: none;
 }

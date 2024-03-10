@@ -131,7 +131,7 @@ class Game {
 
   showCurrentPoint(point: GamePoint) {
     setPanel(`<img class="previewPicto" src="pictos/${point.picto}" /><br />
-            Placez <b>${point.name}</b>`)
+            Cliquez pour placer <b>${point.name}</b>`)
   }
 }
 
