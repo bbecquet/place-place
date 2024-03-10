@@ -55,6 +55,7 @@ class Game {
       this.map.createMarker(startPoint, true)
     })
 
+    this.map.fit()
     this.map.setCursor('crosshair')
 
     this.advancePoint()
@@ -85,7 +86,7 @@ class Game {
   }
 
   async validateInput() {
-    this.map.fit()
+    this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
     this.map.freezeInput()
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
@@ -108,7 +109,7 @@ window.onload = function () {
       new Game(
         points.map((pt: Omit<GamePoint, 'userPosition'>) => ({
           ...pt,
-          userPosition: L.latLng([0, 0]),
+          userPosition: L.latLng(pt.position),
         })) as GamePoint[]
       )
     })
