@@ -51,7 +51,7 @@ class GameMap {
       showSubunits: true,
     })
 
-    this.map = L.map(element, { ...options, zoomSnap: 0.1 })
+    this.map = L.map(element, { ...options, zoomSnap: 0.1, attributionControl: false })
       .addControl(scale)
       .addLayer(this.background)
       .addLayer(this.markers)
