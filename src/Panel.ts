@@ -47,13 +47,11 @@ class Panel {
         <button id="finishButton">${checkIcon} Terminer</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
-      this._setContent(
-        `<div class="detailedResults">
-          <p>Résultats</p>
+      this._setContent(`
+        <div class="detailedResults">
           <ul id="pointScores"></ul>
           <button id="speedupScoring">${fastForwardIcon} Score final</button>
-        </div>`
-      )
+        </div>`)
       document.getElementById('speedupScoring')?.addEventListener('click', evt => {
         this.onJumpToResult()
         ;(evt.target as HTMLElement).remove()
@@ -67,11 +65,12 @@ class Panel {
     <div class="currentPoint">
         ${getImage(point, false)}
         <b>${point.name}</b></div>
-    ${!isFirst ? '<p>Vous pouvez aussi déplacer les points précédents.</p>' : ''}`)
+    ${!isFirst ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>' : ''}`)
   }
 
   setScore(score: number) {
     this.panel.classList.add('score')
+    document.getElementById('speedupScoring')?.remove()
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
         <button id="replayButton">${restartIcon} Rejouer</button>
@@ -88,11 +87,11 @@ class Panel {
       li.className = 'pointScore'
       dist = document.createElement('div')
       dist.className = 'dist'
-      li.innerHTML = `<div>${point.name}</div>`
+      li.innerHTML = `${getImage(point, false)}<div>${point.name}</div>`
       li.appendChild(dist)
       list.appendChild(li)
     }
-    ;(dist as HTMLElement).style.cssText = '--color:' + color
+    ;(dist.parentElement as HTMLElement).style.cssText = '--color:' + color
     dist.innerHTML = formatDistance(distance, true)
   }
 }

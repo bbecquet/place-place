@@ -22,13 +22,18 @@ main {
   flex-direction: column;
 }
 
+.small {
+  font-size: 0.75rem;
+}
+
 #map {
   flex-grow: 1;
   width: 100%;
   height: 100%;
 }
 
-#panel {
+#sidebar {
+  min-height: 200px;
   padding: 1rem;
   border-top: 1px solid black;
 }
@@ -175,13 +180,20 @@ button:hover {
 }
 
 #pointScores {
-  margin: 2rem 0;
+  margin-bottom: 2rem;
 }
 
 li.pointScore {
   list-style-type: none;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+li.pointScore .gameMarker {
+  width: 40px;
+  height: 40px;
 }
 
 li.pointScore:not(:last-child) {
@@ -190,22 +202,26 @@ li.pointScore:not(:last-child) {
 
 .pointScore .dist {
   color: var(--color, black);
+  margin-left: auto;
 }
 
 .currentPoint {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 0.5rem 0 2rem;
+  margin: 0.5rem 0 1.5rem;
 }
 
 .currentPoint .gameMarker {
-  flex-shrink: 0;
   width: 80px;
   height: 80px;
 }
 
-.currentPoint .gameMarker::after {
+#panel .gameMarker {
+  flex-shrink: 0;
+}
+
+#panel .gameMarker::after {
   display: none;
 }
 
@@ -220,7 +236,7 @@ li.pointScore:not(:last-child) {
     flex-direction: row;
   }
 
-  #panel {
+  #sidebar {
     flex-basis: 500px;
     border: 0;
     border-left: 1px solid black;

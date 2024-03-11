@@ -97,20 +97,18 @@ class Game {
   }
 
   async validateInput() {
-    this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
     this.map.freezeInput()
+    this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
+    await this.waitFor(500)
     this.panel.setMessage('scoring')
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
       const point = this.guessingPoints[i]
-      if (!this.skipValidation) {
-        await this.waitFor(1000)
-      }
       await this.map.checkPlace(point, !this.skipValidation, (dist, color) =>
         this.panel.updateScoringDistance(point, dist, color)
       )
       if (!this.skipValidation) {
-        await this.waitFor(1000)
+        await this.waitFor(1500)
       }
     }
 

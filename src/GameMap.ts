@@ -139,6 +139,7 @@ class GameMap {
     this.map.flyToBounds(L.latLngBounds(coords), {
       padding,
       animate: disableAnimation !== undefined && true ? false : undefined,
+      duration: 0.5,
     })
   }
 
