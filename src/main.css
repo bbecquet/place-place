@@ -140,6 +140,10 @@ button:hover {
   font-size: 16px;
 }
 
+.leaflet-control-graphicscale .division {
+  background-color: white;
+}
+
 .leaflet-control-graphicscale .division .line {
   height: 12px;
 }
