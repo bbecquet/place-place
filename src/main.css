@@ -35,7 +35,8 @@ main {
 #sidebar {
   min-height: 200px;
   padding: 1rem;
-  border-top: 1px solid black;
+  z-index: 1000;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
 }
 
 .leaflet-div-icon {
@@ -239,7 +240,6 @@ li.pointScore:not(:last-child) {
   #sidebar {
     flex-basis: 500px;
     border: 0;
-    border-left: 1px solid black;
   }
 
   li.pointScore:not(:last-child) {

@@ -97,10 +97,10 @@ class Game {
   }
 
   async validateInput() {
+    this.panel.setMessage('scoring')
     this.map.freezeInput()
     this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
-    await this.waitFor(500)
-    this.panel.setMessage('scoring')
+    await this.waitFor(1000) // wait for map animation and add some time
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
       const point = this.guessingPoints[i]
