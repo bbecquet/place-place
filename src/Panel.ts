@@ -27,6 +27,7 @@ class Panel {
   }
 
   setMessage(status: 'new' | 'lastPoint' | 'scoring') {
+    this.panel.classList.remove('score')
     if (status === 'new') {
       this._setContent(`
         <p>Ceci est une carte de Paris</p>
@@ -38,7 +39,9 @@ class Panel {
         <button id="finishButton">✅ Terminer</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
-      this._setContent(`<p>Résultats</p><ul id="pointScores"></ul>`)
+      this._setContent(
+        `<div class="detailedResults"><p>Résultats</p><ul id="pointScores"></ul></div>`
+      )
     }
   }
 
@@ -49,6 +52,7 @@ class Panel {
   }
 
   setScore(score: number) {
+    this.panel.classList.add('score')
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
         <button id="replayButton">🔁 Rejouer</button>

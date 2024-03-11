@@ -99,7 +99,7 @@ main {
 .distanceTooltip {
   border: 0;
   background-color: white;
-  padding: 3px;
+  padding: 0 3px;
   box-shadow: none;
   font-size: 1rem;
   font-weight: bold;
@@ -178,6 +178,12 @@ li.pointScore:not(:last-child) {
   color: var(--color, black);
 }
 
+@media (max-width: 767px) {
+  .score .detailedResults {
+    display: none;
+  }
+}
+
 @media (min-width: 768px) {
   main {
     flex-direction: row;
@@ -190,6 +196,6 @@ li.pointScore:not(:last-child) {
   }
 
   li.pointScore:not(:last-child) {
-    display: block;
+    display: flex;
   }
 }

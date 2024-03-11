@@ -158,6 +158,7 @@ class GameMap {
         })
           .bindTooltip('', {
             className: 'distanceTooltip',
+            offset: [0, -6],
             permanent: true,
             direction: 'top',
           })
@@ -170,7 +171,7 @@ class GameMap {
 
         animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
           const dist = p.distanceTo(place.userPosition)
-          const color = distanceRatioToColor(dist / 3000)
+          const color = distanceRatioToColor((dist - 250) / 3000)
 
           pointMarker.setLatLng(p)
 
