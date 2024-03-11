@@ -130,6 +130,10 @@ button {
   margin: 30px 0 15px;
   cursor: pointer;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
 button:hover {

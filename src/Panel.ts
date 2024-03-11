@@ -1,5 +1,6 @@
 import { GamePoint } from './types'
 import { formatDistance } from './utils'
+import { startIcon, restartIcon, checkIcon } from './icons'
 
 class Panel {
   panel: HTMLElement
@@ -31,12 +32,12 @@ class Panel {
     if (status === 'new') {
       this._setContent(`
         <p>Ceci est une carte de Paris</p>
-        <button id="startButton">▶️ Démarrer</button>`)
+        <button id="startButton">${startIcon} Démarrer</button>`)
       document.getElementById('startButton')?.addEventListener('click', this.onStart)
     } else if (status === 'lastPoint') {
       this._setContent(`
         <p>Vous pouvez encore changer la position des points.</p>
-        <button id="finishButton">✅ Terminer</button>`)
+        <button id="finishButton">${checkIcon} Terminer</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
       this._setContent(
@@ -55,7 +56,7 @@ class Panel {
     this.panel.classList.add('score')
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
-        <button id="replayButton">🔁 Rejouer</button>
+        <button id="replayButton">${restartIcon} Rejouer</button>
     `
     document.getElementById('replayButton')?.addEventListener('click', this.onStart)
   }
