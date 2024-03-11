@@ -38,13 +38,15 @@ class Panel {
     this.panel.classList.remove('score')
     if (status === 'new') {
       this._setContent(`
-        <p>Ceci est une carte de Paris</p>
+        <p>Ceci est une carte de Paris.</p>
+        <p>Les points suivants sont correctement positionnés :</p>
+        <p>Saurez-vous placer les autres ?</p>
         <button id="startButton">${startIcon} Démarrer</button>`)
       document.getElementById('startButton')?.addEventListener('click', this.onStart)
     } else if (status === 'lastPoint') {
       this._setContent(`
-        <p>Vous pouvez encore changer la position des points.</p>
-        <button id="finishButton">${checkIcon} Terminer</button>`)
+        <p>Vous pouvez encore changer la position des points avant de les vérifier.</p>
+        <button id="finishButton">${checkIcon} Vérifier les positions</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
       this._setContent(`
@@ -65,7 +67,11 @@ class Panel {
     <div class="currentPoint">
         ${getImage(point, false)}
         <b>${point.name}</b></div>
-    ${!isFirst ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>' : ''}`)
+    ${
+      !isFirst
+        ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>'
+        : '<p class="small">Vous pouvez déplacer et zoomer/dézoomer la carte.</p>'
+    }`)
   }
 
   setScore(score: number) {
