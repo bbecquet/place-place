@@ -1,6 +1,12 @@
 @import '../node_modules/leaflet/dist/leaflet.css';
 @import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
 
+:root {
+  --primaryColor: rgb(55, 139, 107);
+  --primaryColorLight: rgb(67, 170, 131);
+  --primaryColorLighter: rgb(75, 192, 147);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -14,6 +20,14 @@ body {
 body {
   font-family: sans-serif;
   font-size: 18px;
+}
+
+a {
+  color: var(--primaryColor);
+}
+
+a:hover {
+  color: var(--primaryColorLight);
 }
 
 main {
@@ -73,7 +87,7 @@ main {
   width: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 10px solid var(--color, black);
+  border-top: 10px solid var(--color, var(--primaryColor));
   position: absolute;
   margin-bottom: -9px;
   bottom: 0;
@@ -85,7 +99,7 @@ main {
 
 .gameMarker:not(.startingPoint) {
   cursor: grab;
-  border-color: var(--color, black);
+  border-color: var(--color, var(--primaryColor));
   border-width: 2px;
 }
 
@@ -95,7 +109,7 @@ main {
 
 .gameMarker.startingPoint {
   cursor: not-allowed;
-  border-color: black;
+  --color: black;
 }
 
 .previewPicto {
@@ -129,11 +143,10 @@ main {
 }
 
 button {
-  background-color: white;
   color: black;
   font-size: 24px;
   padding: 15px;
-  border: 2px solid black;
+  border: 2px solid var(--primaryColor);
   border-radius: 3px;
   transition: 0.2s all ease;
   margin: 30px 0 15px;
@@ -143,11 +156,12 @@ button {
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  background-color: var(--primaryColorLight);
 }
 
 button:hover {
-  border-color: darkgreen;
-  background-color: rgb(143, 209, 143);
+  border: 2px solid var(--primaryColorLight);
+  background-color: var(--primaryColorLighter);
   box-shadow: 0 0 3px 3px #ddd;
 }
 
@@ -201,8 +215,11 @@ li.pointScore:not(:last-child) {
   display: none;
 }
 
-.pointScore .dist {
+.pointScore {
   color: var(--color, black);
+}
+
+.pointScore .dist {
   margin-left: auto;
 }
 
@@ -240,6 +257,9 @@ li.pointScore:not(:last-child) {
   #sidebar {
     flex-basis: 500px;
     border: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   li.pointScore:not(:last-child) {
