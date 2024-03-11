@@ -58,10 +58,11 @@ main {
 .gameMarker::after {
   content: '';
   display: block;
-  width: 100%;
-  height: 10px;
-  background: url(../pictos/tip.svg) bottom center no-repeat;
-  background-size: auto;
+  height: 0;
+  width: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid blue;
   position: absolute;
   margin-bottom: -10px;
   bottom: 0;
