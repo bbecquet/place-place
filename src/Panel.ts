@@ -30,15 +30,15 @@ class Panel {
     if (status === 'new') {
       this._setContent(`
         <p>Ceci est une carte de Paris</p>
-        <button id="startButton">Démarrer</button>`)
+        <button id="startButton">▶️ Démarrer</button>`)
       document.getElementById('startButton')?.addEventListener('click', this.onStart)
     } else if (status === 'lastPoint') {
       this._setContent(`
-        <p>Vous pouvez encore changer la position des points</p>
-        <button id="finishButton">Terminer</button>`)
+        <p>Vous pouvez encore changer la position des points.</p>
+        <button id="finishButton">✅ Terminer</button>`)
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
-      this._setContent(`<p>Résultats :</p><ul id="pointScores"></ul>`)
+      this._setContent(`<p>Résultats</p><ul id="pointScores"></ul>`)
     }
   }
 
@@ -50,9 +50,8 @@ class Panel {
 
   setScore(score: number) {
     this.panel.innerHTML += `
-        Score final :
-        <div id="finalScore">${formatDistance(score)}</div>
-        <button id="replayButton">Rejouer</button>
+        <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
+        <button id="replayButton">🔁 Rejouer</button>
     `
     document.getElementById('replayButton')?.addEventListener('click', this.onStart)
   }

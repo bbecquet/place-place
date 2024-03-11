@@ -1,10 +1,6 @@
 @import '../node_modules/leaflet/dist/leaflet.css';
 @import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
 
-:root {
-  --front: blue;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -36,18 +32,6 @@ main {
   /* flex-basis: 400px; */
   padding: 1rem;
   border-top: 1px solid black;
-}
-
-@media (min-width: 768px) {
-  main {
-    flex-direction: row;
-  }
-
-  #panel {
-    flex-basis: 500px;
-    border: 0;
-    border-left: 1px solid black;
-  }
 }
 
 .leaflet-container {
@@ -121,7 +105,7 @@ main {
 }
 
 .distanceTooltip .content {
-  color: var(--color, --front);
+  color: var(--color, black);
 }
 
 .distanceTooltip:before {
@@ -130,14 +114,15 @@ main {
 
 button {
   background-color: white;
-  color: var(--front);
+  color: black;
   font-size: 24px;
   padding: 15px;
-  border: 2px solid var(--front);
+  border: 2px solid black;
   border-radius: 3px;
   transition: 0.2s all ease;
   margin: 30px 0 15px;
   cursor: pointer;
+  width: 100%;
 }
 
 button:hover {
@@ -147,7 +132,8 @@ button:hover {
 
 #finalScore {
   font-weight: bold;
-  font-size: 36px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .leaflet-control-graphicscale {
@@ -169,12 +155,36 @@ button:hover {
   display: none;
 }
 
+#pointScores {
+  margin: 2rem 0;
+}
+
 li.pointScore {
   list-style-type: none;
   display: flex;
   justify-content: space-between;
 }
 
+li.pointScore:not(:last-child) {
+  display: none;
+}
+
 .pointScore .dist {
   color: var(--color, black);
+}
+
+@media (min-width: 768px) {
+  main {
+    flex-direction: row;
+  }
+
+  #panel {
+    flex-basis: 500px;
+    border: 0;
+    border-left: 1px solid black;
+  }
+
+  li.pointScore:not(:last-child) {
+    display: block;
+  }
 }
