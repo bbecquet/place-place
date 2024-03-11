@@ -34,11 +34,17 @@ main {
   border-top: 1px solid black;
 }
 
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}
+
 .leaflet-container {
   background-color: white;
 }
 
 .gameMarker {
+  height: 100%;
   border: 1px solid;
   border-radius: 50%;
   display: flex;
@@ -62,20 +68,20 @@ main {
   width: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 10px solid blue;
+  border-top: 10px solid var(--color, black);
   position: absolute;
-  margin-bottom: -10px;
+  margin-bottom: -9px;
   bottom: 0;
 }
 
-.gameMarker.startingPoint div,
-.gameMarker.startingPoint:after {
-  filter: grayscale(1) contrast(100%);
+.gameMarker div {
+  filter: grayscale(1) contrast(100%);  /* TODO: remove blue in SVG/PNG to get rid of this hack */
 }
 
 .gameMarker:not(.startingPoint) {
   cursor: grab;
-  border-color: blue;
+  border-color: var(--color, black);
+  border-width: 2px;
 }
 
 .gameMarker.startingPoint {

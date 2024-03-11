@@ -16,6 +16,7 @@ import { segmentEach } from '@turf/meta'
 import { GamePoint } from './types'
 import { animatePoint, formatDistance, clamp, isMobile } from './utils'
 import { interpolateRgbBasis } from 'd3-interpolate'
+import { getImage } from './point'
 
 const meshStyle = {
   weight: 1,
@@ -89,10 +90,9 @@ class GameMap {
 
   createMarker(point: GamePoint, isStarting?: boolean) {
     const icon = L.divIcon({
-      className: 'gameMarker' + (isStarting ? ' startingPoint' : ''),
       iconSize: [this.iconSize, this.iconSize],
       iconAnchor: [this.iconSize / 2, this.iconSize + 10],
-      html: `<div style="background-image: url(${point.picto});"></div>`,
+      html: getImage(point, !!isStarting),
     })
 
     const marker = L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
@@ -142,15 +142,15 @@ class GameMap {
     })
   }
 
-  checkPlace(place: GamePoint, onUpdateDistance?: (distance: number, color: string) => void) {
+  checkPlace(point: GamePoint, onUpdateDistance?: (distance: number, color: string) => void) {
     return new Promise(resolve => {
       setTimeout(() => {
-        const distanceLine = L.polyline([place.userPosition], {
+        const distanceLine = L.polyline([point.userPosition], {
           dashArray: '5,10',
           color: 'blue',
         }).addTo(this.results)
 
-        const fixedUserPositionMarker = L.circleMarker(place.userPosition, {
+        const fixedUserPositionMarker = L.circleMarker(point.userPosition, {
           radius: 8,
           fillOpacity: 1,
           stroke: false,
@@ -164,23 +164,29 @@ class GameMap {
           })
           .addTo(this.results)
 
-        const fullDistance = place.userPosition.distanceTo(place.position)
+        const fullDistance = point.userPosition.distanceTo(point.position)
         // duration proportional to distance, with max 2s, min 1/2s
         const duration = clamp(fullDistance, 500, 1500)
-        const pointMarker = this.pointToMarker[place.id]
+        const pointMarker = this.pointToMarker[point.id]
 
-        animatePoint(place.userPosition, L.latLng(place.position), duration, (p, isFinished) => {
-          const dist = p.distanceTo(place.userPosition)
+        animatePoint(point.userPosition, L.latLng(point.position), duration, (p, isFinished) => {
+          const dist = p.distanceTo(point.userPosition)
           const color = distanceRatioToColor((dist - 250) / 3000)
 
-          pointMarker.setLatLng(p)
+          pointMarker.setLatLng(p).setIcon(
+            L.divIcon({
+              iconSize: [this.iconSize, this.iconSize],
+              iconAnchor: [this.iconSize / 2, this.iconSize + 10],
+              html: getImage(point, false, color),
+            })
+          )
 
           fixedUserPositionMarker
             .setTooltipContent(
               `<div class="content" style="--color: ${color}">${formatDistance(dist, true)}</div>`
             )
             .setStyle({ fillColor: color })
-          distanceLine.setLatLngs([place.userPosition, p]).setStyle({ color })
+          distanceLine.setLatLngs([point.userPosition, p]).setStyle({ color })
 
           if (onUpdateDistance) {
             onUpdateDistance(dist, color)
