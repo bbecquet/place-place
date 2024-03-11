@@ -1,6 +1,7 @@
 import { GamePoint } from './types'
 import { formatDistance } from './utils'
 import { startIcon, restartIcon, checkIcon } from './icons'
+import { getImage } from './point'
 
 class Panel {
   panel: HTMLElement
@@ -46,10 +47,13 @@ class Panel {
     }
   }
 
-  setPoint(point: GamePoint) {
+  setPoint(point: GamePoint, isFirst?: boolean) {
     this._setContent(`
-        <img class="previewPicto" src="${point.picto}" alt="" />
-        <p>Cliquez pour placer <b>${point.name}</b></p>`)
+    <p>Cliquez sur la carte placer</p>
+    <div class="currentPoint">
+        ${getImage(point, false)}
+        <b>${point.name}</b></div>
+    ${!isFirst ? '<p>Vous pouvez aussi déplacer les points précédents.</p>' : ''}`)
   }
 
   setScore(score: number) {

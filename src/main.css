@@ -29,7 +29,6 @@ main {
 }
 
 #panel {
-  /* flex-basis: 400px; */
   padding: 1rem;
   border-top: 1px solid black;
 }
@@ -82,6 +81,10 @@ main {
   cursor: grab;
   border-color: var(--color, black);
   border-width: 2px;
+}
+
+.gameMarker:has(.leaflet-drag-target) {
+  cursor: grabbing;
 }
 
 .gameMarker.startingPoint {
@@ -137,8 +140,9 @@ button {
 }
 
 button:hover {
-  background-color: silver;
-  box-shadow: 0 0 3px 3px silver;
+  border-color: darkgreen;
+  background-color: rgb(143, 209, 143);
+  box-shadow: 0 0 3px 3px #ddd;
 }
 
 #finalScore {
@@ -186,6 +190,23 @@ li.pointScore:not(:last-child) {
 
 .pointScore .dist {
   color: var(--color, black);
+}
+
+.currentPoint {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0 2rem;
+}
+
+.currentPoint .gameMarker {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+}
+
+.currentPoint .gameMarker::after {
+  display: none;
 }
 
 @media (max-width: 767px) {
