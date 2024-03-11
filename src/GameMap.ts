@@ -43,6 +43,7 @@ class GameMap {
     this.background = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       className: 'mapBackground',
       attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
+      opacity: 0,
     })
     this.markers = L.layerGroup()
     this.mesh = L.layerGroup()
@@ -84,7 +85,6 @@ class GameMap {
   freezeInput() {
     this.freezeMarkers()
     this.toggleInteractivity(false)
-    this.toggleBackground(true)
     this.mesh.removeFrom(this.map)
   }
 
@@ -142,61 +142,63 @@ class GameMap {
     })
   }
 
-  checkPlace(point: GamePoint, onUpdateDistance?: (distance: number, color: string) => void) {
+  checkPlace(
+    point: GamePoint,
+    animate: boolean,
+    onUpdateDistance?: (distance: number, color: string) => void
+  ) {
     return new Promise(resolve => {
-      setTimeout(() => {
-        const distanceLine = L.polyline([point.userPosition], {
-          dashArray: '5,10',
-          color: 'blue',
-        }).addTo(this.results)
+      const distanceLine = L.polyline([point.userPosition], {
+        dashArray: '5,10',
+        color: 'blue',
+      }).addTo(this.results)
 
-        const fixedUserPositionMarker = L.circleMarker(point.userPosition, {
-          radius: 8,
-          fillOpacity: 1,
-          stroke: false,
-          fillColor: 'blue',
+      const fixedUserPositionMarker = L.circleMarker(point.userPosition, {
+        radius: 8,
+        fillOpacity: 1,
+        stroke: false,
+        fillColor: 'blue',
+      })
+        .bindTooltip('', {
+          className: 'distanceTooltip',
+          offset: [0, -6],
+          permanent: true,
+          direction: 'top',
         })
-          .bindTooltip('', {
-            className: 'distanceTooltip',
-            offset: [0, -6],
-            permanent: true,
-            direction: 'top',
+        .addTo(this.results)
+
+      const fullDistance = point.userPosition.distanceTo(point.position)
+      // duration proportional to distance, with max 2s, min 1/2s
+      const duration = animate ? clamp(fullDistance, 500, 1500) : 0
+      const pointMarker = this.pointToMarker[point.id]
+
+      animatePoint(point.userPosition, L.latLng(point.position), duration, (p, isFinished) => {
+        const dist = p.distanceTo(point.userPosition)
+        const color = distanceRatioToColor((dist - 250) / 3000)
+
+        pointMarker.setLatLng(p).setIcon(
+          L.divIcon({
+            iconSize: [this.iconSize, this.iconSize],
+            iconAnchor: [this.iconSize / 2, this.iconSize + 10],
+            html: getImage(point, false, color),
           })
-          .addTo(this.results)
+        )
 
-        const fullDistance = point.userPosition.distanceTo(point.position)
-        // duration proportional to distance, with max 2s, min 1/2s
-        const duration = clamp(fullDistance, 500, 1500)
-        const pointMarker = this.pointToMarker[point.id]
-
-        animatePoint(point.userPosition, L.latLng(point.position), duration, (p, isFinished) => {
-          const dist = p.distanceTo(point.userPosition)
-          const color = distanceRatioToColor((dist - 250) / 3000)
-
-          pointMarker.setLatLng(p).setIcon(
-            L.divIcon({
-              iconSize: [this.iconSize, this.iconSize],
-              iconAnchor: [this.iconSize / 2, this.iconSize + 10],
-              html: getImage(point, false, color),
-            })
+        fixedUserPositionMarker
+          .setTooltipContent(
+            `<div class="content" style="--color: ${color}">${formatDistance(dist, true)}</div>`
           )
+          .setStyle({ fillColor: color })
+        distanceLine.setLatLngs([point.userPosition, p]).setStyle({ color })
 
-          fixedUserPositionMarker
-            .setTooltipContent(
-              `<div class="content" style="--color: ${color}">${formatDistance(dist, true)}</div>`
-            )
-            .setStyle({ fillColor: color })
-          distanceLine.setLatLngs([point.userPosition, p]).setStyle({ color })
+        if (onUpdateDistance) {
+          onUpdateDistance(dist, color)
+        }
 
-          if (onUpdateDistance) {
-            onUpdateDistance(dist, color)
-          }
-
-          if (isFinished) {
-            setTimeout(resolve, 1000)
-          }
-        })
-      }, 1000)
+        if (isFinished) {
+          resolve('finished!')
+        }
+      })
     })
   }
 

@@ -12,6 +12,8 @@ class Game {
   panel: Panel
   finished: boolean
   currentPointIndex: number
+  skipValidation: boolean
+  waitHandle: any
 
   constructor(points: GamePoint[]) {
     this.points = points
@@ -19,6 +21,7 @@ class Game {
     this.guessingPoints = []
     this.finished = true
     this.currentPointIndex = -1
+    this.skipValidation = false
 
     this.map = new GameMap(
       document.getElementById('map') as HTMLElement,
@@ -38,6 +41,7 @@ class Game {
     this.panel = new Panel(document.getElementById('panel') as HTMLElement, {
       onStart: () => this.initGame(),
       onEnd: () => this.validateInput(),
+      onJumpToResult: () => this.jumpToResult(),
     })
   }
 
@@ -50,6 +54,7 @@ class Game {
     this.guessingPoints = guessingPoints
     this.finished = false
     this.currentPointIndex = -1
+    this.skipValidation = false
 
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint, true)
@@ -76,13 +81,19 @@ class Game {
       this.panel.setMessage('lastPoint')
       this.map.setCursor('pointer')
     } else {
-      this.panel.setPoint(this.guessingPoints[this.currentPointIndex])
+      this.panel.setPoint(this.guessingPoints[this.currentPointIndex], this.currentPointIndex === 0)
     }
   }
 
   placePoint(pointDefinition: GamePoint, clickedPosition: LatLng) {
     pointDefinition.userPosition = clickedPosition
     this.map.createMarker(pointDefinition, false)
+  }
+
+  waitFor(ms: number) {
+    return new Promise(resolve => {
+      this.waitHandle = setTimeout(() => resolve('waiting'), ms)
+    })
   }
 
   async validateInput() {
@@ -92,17 +103,28 @@ class Game {
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
       const point = this.guessingPoints[i]
-      await this.map.checkPlace(point, (dist, color) =>
+      if (!this.skipValidation) {
+        await this.waitFor(1000)
+      }
+      await this.map.checkPlace(point, !this.skipValidation, (dist, color) =>
         this.panel.updateScoringDistance(point, dist, color)
       )
+      if (!this.skipValidation) {
+        await this.waitFor(1000)
+      }
     }
 
+    this.map.toggleBackground(true)
     this.map.toggleInteractivity(true)
 
     const totalDistance = this.guessingPoints
       .map(pt => pt.userPosition.distanceTo(pt.position))
       .reduce((sum, points) => sum + points, 0)
     this.panel.setScore(totalDistance)
+  }
+
+  jumpToResult() {
+    this.skipValidation = true
   }
 }
 

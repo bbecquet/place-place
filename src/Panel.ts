@@ -1,20 +1,26 @@
 import { GamePoint } from './types'
 import { formatDistance } from './utils'
-import { startIcon, restartIcon, checkIcon } from './icons'
+import { startIcon, restartIcon, checkIcon, fastForwardIcon } from './icons'
 import { getImage } from './point'
 
 class Panel {
   panel: HTMLElement
   onStart: () => void
   onEnd: () => void
+  onJumpToResult: () => void
 
   constructor(
     element: HTMLElement,
-    { onStart, onEnd }: { onStart: () => void; onEnd: () => void }
+    {
+      onStart,
+      onEnd,
+      onJumpToResult,
+    }: { onStart: () => void; onEnd: () => void; onJumpToResult: () => void }
   ) {
     this.panel = element
     this.onStart = onStart
     this.onEnd = onEnd
+    this.onJumpToResult = onJumpToResult
 
     this.setMessage('new')
   }
@@ -42,14 +48,22 @@ class Panel {
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
       this._setContent(
-        `<div class="detailedResults"><p>Résultats</p><ul id="pointScores"></ul></div>`
+        `<div class="detailedResults">
+          <p>Résultats</p>
+          <ul id="pointScores"></ul>
+          <button id="speedupScoring">${fastForwardIcon} Score final</button>
+        </div>`
       )
+      document.getElementById('speedupScoring')?.addEventListener('click', evt => {
+        this.onJumpToResult()
+        ;(evt.target as HTMLElement).remove()
+      })
     }
   }
 
   setPoint(point: GamePoint, isFirst?: boolean) {
     this._setContent(`
-    <p>Cliquez sur la carte placer</p>
+    <p>Cliquez sur la carte pour placer</p>
     <div class="currentPoint">
         ${getImage(point, false)}
         <b>${point.name}</b></div>
