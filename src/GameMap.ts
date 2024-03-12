@@ -88,23 +88,23 @@ class GameMap {
     this.mesh.removeFrom(this.map)
   }
 
-  createMarker(point: GamePoint, isStarting?: boolean) {
+  createMarker(point: GamePoint) {
     const icon = L.divIcon({
       iconSize: [this.iconSize, this.iconSize],
       iconAnchor: [this.iconSize / 2, this.iconSize + 10],
-      html: getImage(point, !!isStarting),
+      html: getImage(point),
     })
 
-    const marker = L.marker(isStarting ? point.position : point.userPosition || [0, 0], {
+    const marker = L.marker(point.isStarting ? point.position : point.userPosition || [0, 0], {
       icon,
-      draggable: !isStarting,
+      draggable: !point.isStarting,
       autoPan: true,
     })
-      .bindTooltip(point.name + (isStarting ? ' 🔒' : ''), {
+      .bindTooltip(point.name + (point.isStarting ? ' 🔒' : ''), {
         className: 'pointNameTooltip',
         direction: 'top',
         offset: [0, -this.iconSize],
-        permanent: isStarting,
+        permanent: point.isStarting,
       })
       .on('dragend', evt => {
         // TODO: avoid this on-place modification of the model
@@ -181,7 +181,7 @@ class GameMap {
           L.divIcon({
             iconSize: [this.iconSize, this.iconSize],
             iconAnchor: [this.iconSize / 2, this.iconSize + 10],
-            html: getImage(point, false, color),
+            html: getImage(point, color),
           })
         )
 

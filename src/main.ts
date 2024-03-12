@@ -1,11 +1,11 @@
 import L, { LatLng } from 'leaflet'
 import { shuffleArray } from './utils'
-import { GamePoint } from './types'
+import { Point, GamePoint } from './types'
 import GameMap from './GameMap'
 import Panel from './Panel'
 
 class Game {
-  points: GamePoint[]
+  points: Point[]
   guessingPoints: GamePoint[]
   startPoints: GamePoint[]
   map: GameMap
@@ -15,7 +15,7 @@ class Game {
   skipValidation: boolean
   waitHandle: any
 
-  constructor(points: GamePoint[]) {
+  constructor(points: Point[]) {
     this.points = points
     this.startPoints = []
     this.guessingPoints = []
@@ -57,7 +57,7 @@ class Game {
     this.skipValidation = false
 
     startPoints.forEach(startPoint => {
-      this.map.createMarker(startPoint, true)
+      this.map.createMarker(startPoint)
     })
 
     this.map.fit(undefined, true)
@@ -66,11 +66,16 @@ class Game {
     this.advancePoint()
   }
 
-  preparePoints(points: GamePoint[], nbStart: number) {
+  preparePoints(points: Point[], nbStart: number) {
     const shuffledPoints = shuffleArray(points)
+
     return {
-      startPoints: shuffledPoints.slice(0, nbStart),
-      guessingPoints: shuffledPoints.slice(nbStart),
+      startPoints: shuffledPoints
+        .slice(0, nbStart)
+        .map(pt => ({ ...pt, isStarting: true, userPosition: L.latLng(pt.position) })),
+      guessingPoints: shuffledPoints
+        .slice(nbStart)
+        .map(pt => ({ ...pt, isStarting: false, userPosition: L.latLng(pt.position) })),
     }
   }
 
@@ -87,7 +92,7 @@ class Game {
 
   placePoint(pointDefinition: GamePoint, clickedPosition: LatLng) {
     pointDefinition.userPosition = clickedPosition
-    this.map.createMarker(pointDefinition, false)
+    this.map.createMarker(pointDefinition)
   }
 
   waitFor(ms: number) {
@@ -99,7 +104,12 @@ class Game {
   async validateInput() {
     this.panel.setMessage('scoring')
     this.map.freezeInput()
-    this.map.fit(this.points.flatMap(point => [point.position, point.userPosition]))
+    this.map.fit(
+      [...this.startPoints, ...this.guessingPoints].flatMap(point => [
+        point.position,
+        point.userPosition,
+      ])
+    )
     await this.waitFor(1000) // wait for map animation and add some time
 
     for (let i = 0; i < this.guessingPoints.length; i++) {
@@ -130,11 +140,6 @@ window.onload = function () {
   fetch('points.json')
     .then(response => response.json())
     .then(points => {
-      new Game(
-        points.map((pt: Omit<GamePoint, 'userPosition'>) => ({
-          ...pt,
-          userPosition: L.latLng(pt.position),
-        })) as GamePoint[]
-      )
+      new Game(points as Point[])
     })
 }

@@ -65,9 +65,7 @@ class Panel {
     this.panel.className = 'placing'
     this._setContent(`
     <p>Cliquez sur la carte pour placer</p>
-    <div class="currentPoint">
-        ${getImage(point, false)}
-        <b>${point.name}</b></div>
+    <div class="currentPoint">${getImage(point)}<b>${point.name}</b></div>
     ${
       !isFirst
         ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>'
@@ -94,7 +92,7 @@ class Panel {
       li.className = 'pointScore'
       dist = document.createElement('div')
       dist.className = 'dist'
-      li.innerHTML = `${getImage(point, false)}<div>${point.name}</div>`
+      li.innerHTML = `${getImage(point)}<div>${point.name}</div>`
       li.appendChild(dist)
       list.appendChild(li)
     }
