@@ -10,7 +10,7 @@ class Game {
   startPoints: GamePoint[]
   map: GameMap
   panel: Panel
-  finished: boolean
+  activeGame: boolean
   currentPointIndex: number
   skipValidation: boolean
   waitHandle: any
@@ -19,7 +19,7 @@ class Game {
     this.points = points
     this.startPoints = []
     this.guessingPoints = []
-    this.finished = true
+    this.activeGame = false
     this.currentPointIndex = -1
     this.skipValidation = false
 
@@ -30,7 +30,7 @@ class Game {
         zoom: 12,
       },
       evt => {
-        if (this.finished) {
+        if (!this.activeGame) {
           return
         }
         this.placePoint(this.guessingPoints[this.currentPointIndex], evt.latlng)
@@ -39,7 +39,7 @@ class Game {
     )
 
     this.panel = new Panel(document.getElementById('panel') as HTMLElement, {
-      onStart: () => this.advancePoint(),
+      onStart: () => this.startGame(),
       onRestart: () => this.initGame(),
       onEnd: () => this.validateInput(),
       onJumpToResult: () => this.jumpToResult(),
@@ -55,16 +55,20 @@ class Game {
     const { startPoints, guessingPoints } = this.preparePoints(this.points, 2)
     this.startPoints = startPoints
     this.guessingPoints = guessingPoints
-    this.finished = false
     this.currentPointIndex = -1
     this.skipValidation = false
+
+    this.panel.setNewGame(this.startPoints)
 
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint)
     })
-
-    this.panel.setNewGame(this.startPoints)
     this.map.fit()
+  }
+
+  startGame() {
+    this.activeGame = true
+    this.advancePoint()
   }
 
   preparePoints(points: Point[], nbStart: number) {
@@ -84,7 +88,7 @@ class Game {
     this.map.setCursor('crosshair')
     this.currentPointIndex++
     if (this.currentPointIndex >= this.guessingPoints.length) {
-      this.finished = true
+      this.activeGame = false
       this.panel.setMessage('lastPoint')
       this.map.setCursor('pointer')
     } else {
