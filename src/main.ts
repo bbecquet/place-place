@@ -141,7 +141,7 @@ class Game {
 window.onload = function () {
   fetch('points.json')
     .then(response => response.json())
-    .then(points => {
-      new Game(points as Point[])
+    .then((points: Point[]) => {
+      new Game(points)
     })
 }
