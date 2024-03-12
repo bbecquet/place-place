@@ -96,6 +96,7 @@ main {
   border-top: 10px solid var(--color, var(--primaryColor));
   position: absolute;
   margin-bottom: -9px;
+  z-index: -1;
   bottom: 0;
 }
 
@@ -112,6 +113,23 @@ main {
 .gameMarker.startingPoint {
   cursor: not-allowed;
   --color: black;
+}
+
+.gameMarker.startingPoint::before {
+  content: '🔒';
+  color: transparent;
+  text-shadow: 0 0 0 white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  background-color: black;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .previewPicto {
@@ -250,6 +268,7 @@ li:has(.point) {
 
 #panel .gameMarker {
   flex-shrink: 0;
+  position: relative;
 }
 
 #panel .gameMarker::after {

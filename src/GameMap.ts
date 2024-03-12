@@ -99,16 +99,15 @@ class GameMap {
       html: getImage(point),
     })
 
-    const marker = L.marker(point.isStarting ? point.position : point.userPosition || [0, 0], {
+    const marker = L.marker(point.isStarting ? point.position : point.userPosition, {
       icon,
       draggable: !point.isStarting,
       autoPan: true,
     })
-      .bindTooltip(point.name + (point.isStarting ? ' 🔒' : ''), {
+      .bindTooltip(point.name, {
         className: 'pointNameTooltip',
         direction: 'top',
-        offset: [0, -this.iconSize],
-        permanent: point.isStarting,
+        offset: [0, -this.iconSize - 5],
       })
       .on('dragend', evt => {
         // TODO: avoid this on-place modification of the model
