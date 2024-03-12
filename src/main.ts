@@ -64,7 +64,7 @@ class Game {
     })
 
     this.panel.setNewGame(this.startPoints)
-    this.map.fit(undefined, true)
+    this.map.fit()
   }
 
   preparePoints(points: Point[], nbStart: number) {

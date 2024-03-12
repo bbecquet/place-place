@@ -1,5 +1,6 @@
 @import '../node_modules/leaflet/dist/leaflet.css';
 @import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Days+One&family=Madimi+One&display=swap');
 
 :root {
   --primaryColor: rgb(55, 139, 107);
@@ -18,7 +19,9 @@ body {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: 18px;
 }
 
@@ -51,7 +54,6 @@ main {
 }
 
 #sidebar {
-  min-height: 200px;
   padding: 1rem;
   z-index: 1000;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
@@ -171,6 +173,7 @@ button:hover {
 
 #finalScore {
   font-weight: bold;
+  font-size: 1.5rem;
   display: flex;
   justify-content: space-between;
 }
@@ -202,13 +205,13 @@ button:hover {
   margin-bottom: 2rem;
 }
 
-li.pointScore {
+.pointScore {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-li.pointScore:not(:last-child) {
+.pointScore:not(:last-child) {
   display: none;
 }
 
@@ -220,8 +223,8 @@ li.pointScore:not(:last-child) {
   margin-left: auto;
 }
 
-li .point {
-  margin: 0.25rem 0;
+li:has(.point) {
+  margin: 0.5rem 0;
 }
 
 .point {
@@ -242,6 +245,11 @@ li .point {
 .currentPoint .gameMarker {
   width: 80px;
   height: 80px;
+}
+
+.currentPoint {
+  font-size: 2rem;
+  line-height: 1;
 }
 
 #panel .gameMarker {

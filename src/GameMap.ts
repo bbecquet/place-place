@@ -65,6 +65,10 @@ class GameMap {
 
     this.iconSize = isMobile() ? 40 : 50
     this.pointToMarker = {}
+
+    new ResizeObserver(() => {
+      this.map.invalidateSize()
+    }).observe(element)
   }
 
   toggleBackground(active: boolean) {
