@@ -35,7 +35,7 @@ class Panel {
   }
 
   setMessage(status: 'new' | 'lastPoint' | 'scoring') {
-    this.panel.classList.remove('score')
+    this.panel.className = status
     if (status === 'new') {
       this._setContent(`
         <p>Ceci est une carte de Paris.</p>
@@ -62,6 +62,7 @@ class Panel {
   }
 
   setPoint(point: GamePoint, isFirst?: boolean) {
+    this.panel.className = 'placing'
     this._setContent(`
     <p>Cliquez sur la carte pour placer</p>
     <div class="currentPoint">
@@ -75,7 +76,7 @@ class Panel {
   }
 
   setScore(score: number) {
-    this.panel.classList.add('score')
+    this.panel.className = 'score'
     document.getElementById('speedupScoring')?.remove()
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>

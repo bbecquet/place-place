@@ -94,7 +94,7 @@ main {
 }
 
 .gameMarker div {
-  filter: grayscale(1) contrast(100%);  /* TODO: remove blue in SVG/PNG to get rid of this hack */
+  filter: grayscale(1) contrast(100%); /* TODO: remove blue in SVG/PNG to get rid of this hack */
 }
 
 .gameMarker:not(.startingPoint) {
@@ -245,6 +245,10 @@ li.pointScore:not(:last-child) {
 
 @media (max-width: 767px) {
   .score .detailedResults {
+    display: none;
+  }
+
+  footer {
     display: none;
   }
 }
