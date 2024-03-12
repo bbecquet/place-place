@@ -58,7 +58,7 @@ class Panel {
     this.panel.className = 'new'
     this._setContent(`
         <p>Ceci est une carte de <b>Paris</b>.</p>
-        <p>Les points suivants sont correctement positionnés :</p>
+        <p>Les points suivants sont déjà placés&nbsp:</p>
         <ul>${points.map(pt => `<li>${pointPanelItem(pt)}</li>`).join('')}</ul>
         <p>Saurez-vous placer les autres ?</p>
         <button id="startButton">${startIcon} Démarrer</button>`)
