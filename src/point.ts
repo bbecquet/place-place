@@ -8,4 +8,11 @@ function getImage(point: GamePoint, color?: string) {
   </div>`
 }
 
-export { getImage }
+function pointPanelItem(point: GamePoint, className = '') {
+  return `<div class="point ${className}">
+    ${getImage(point)}
+    ${point.name}
+  </div>`
+}
+
+export { getImage, pointPanelItem }

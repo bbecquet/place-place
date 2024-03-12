@@ -39,10 +39,13 @@ class Game {
     )
 
     this.panel = new Panel(document.getElementById('panel') as HTMLElement, {
-      onStart: () => this.initGame(),
+      onStart: () => this.advancePoint(),
+      onRestart: () => this.initGame(),
       onEnd: () => this.validateInput(),
       onJumpToResult: () => this.jumpToResult(),
     })
+
+    this.initGame()
   }
 
   initGame() {
@@ -60,10 +63,8 @@ class Game {
       this.map.createMarker(startPoint)
     })
 
+    this.panel.setNewGame(this.startPoints)
     this.map.fit(undefined, true)
-    this.map.setCursor('crosshair')
-
-    this.advancePoint()
   }
 
   preparePoints(points: Point[], nbStart: number) {
@@ -80,6 +81,7 @@ class Game {
   }
 
   advancePoint() {
+    this.map.setCursor('crosshair')
     this.currentPointIndex++
     if (this.currentPointIndex >= this.guessingPoints.length) {
       this.finished = true

@@ -1,11 +1,12 @@
 import { GamePoint } from './types'
 import { formatDistance } from './utils'
 import { startIcon, restartIcon, checkIcon, fastForwardIcon } from './icons'
-import { getImage } from './point'
+import { pointPanelItem } from './point'
 
 class Panel {
   panel: HTMLElement
   onStart: () => void
+  onRestart: () => void
   onEnd: () => void
   onJumpToResult: () => void
 
@@ -13,16 +14,16 @@ class Panel {
     element: HTMLElement,
     {
       onStart,
+      onRestart,
       onEnd,
       onJumpToResult,
-    }: { onStart: () => void; onEnd: () => void; onJumpToResult: () => void }
+    }: { onStart: () => void; onRestart: () => void; onEnd: () => void; onJumpToResult: () => void }
   ) {
     this.panel = element
     this.onStart = onStart
+    this.onRestart = onRestart
     this.onEnd = onEnd
     this.onJumpToResult = onJumpToResult
-
-    this.setMessage('new')
   }
 
   _setContent = (content: string | Node) => {
@@ -34,16 +35,8 @@ class Panel {
     }
   }
 
-  setMessage(status: 'new' | 'lastPoint' | 'scoring') {
-    this.panel.className = status
-    if (status === 'new') {
-      this._setContent(`
-        <p>Ceci est une carte de Paris.</p>
-        <p>Les points suivants sont correctement positionnés :</p>
-        <p>Saurez-vous placer les autres ?</p>
-        <button id="startButton">${startIcon} Démarrer</button>`)
-      document.getElementById('startButton')?.addEventListener('click', this.onStart)
-    } else if (status === 'lastPoint') {
+  setMessage(status: 'lastPoint' | 'scoring') {
+    if (status === 'lastPoint') {
       this._setContent(`
         <p>Vous pouvez encore changer la position des points avant de les vérifier.</p>
         <button id="finishButton">${checkIcon} Vérifier les positions</button>`)
@@ -61,11 +54,22 @@ class Panel {
     }
   }
 
+  setNewGame(points: GamePoint[]) {
+    this.panel.className = 'new'
+    this._setContent(`
+        <p>Ceci est une carte de Paris.</p>
+        <p>Les points suivants sont correctement positionnés :</p>
+        <ul>${points.map(pt => `<li>${pointPanelItem(pt)}</li>`).join('')}</ul>
+        <p>Saurez-vous placer les autres ?</p>
+        <button id="startButton">${startIcon} Démarrer</button>`)
+    document.getElementById('startButton')?.addEventListener('click', this.onStart)
+  }
+
   setPoint(point: GamePoint, isFirst?: boolean) {
     this.panel.className = 'placing'
     this._setContent(`
     <p>Cliquez sur la carte pour placer</p>
-    <div class="currentPoint">${getImage(point)}<b>${point.name}</b></div>
+    ${pointPanelItem(point, 'currentPoint')}
     ${
       !isFirst
         ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>'
@@ -80,7 +84,7 @@ class Panel {
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
         <button id="replayButton">${restartIcon} Rejouer</button>
     `
-    document.getElementById('replayButton')?.addEventListener('click', this.onStart)
+    document.getElementById('replayButton')?.addEventListener('click', this.onRestart)
   }
 
   updateScoringDistance(point: GamePoint, distance: number, color: string) {
@@ -92,7 +96,7 @@ class Panel {
       li.className = 'pointScore'
       dist = document.createElement('div')
       dist.className = 'dist'
-      li.innerHTML = `${getImage(point)}<div>${point.name}</div>`
+      li.innerHTML = pointPanelItem(point)
       li.appendChild(dist)
       list.appendChild(li)
     }
