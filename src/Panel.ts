@@ -87,7 +87,7 @@ class Panel {
     document.getElementById('speedupScoring')?.remove()
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
-        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départs</div></div></button>
+        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div></button>
         <button id="replayButtonNew">${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div></button>
     `
     document.getElementById('replayButton')?.addEventListener('click', () => this.onRestart(false))
