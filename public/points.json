@@ -40,5 +40,11 @@
     "name": "Place de la République",
     "position": [48.8675, 2.36384],
     "picto": "pictos/republique.svg"
+  },
+  {
+    "id": "opera",
+    "name": "Opéra Garnier",
+    "position": [48.87181, 2.33181],
+    "picto": "pictos/opera.svg"
   }
 ]
