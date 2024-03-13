@@ -1,0 +1,315 @@
+@import 'leaflet.css';
+@import 'Leaflet.GraphicScale.min.css';
+
+@font-face {
+  font-family: 'Madimi One';
+  src: url('fonts/MadimiOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --primaryColor: rgb(55, 139, 107);
+  --primaryColorLight: rgb(67, 170, 131);
+  --primaryColorLighter: rgb(75, 192, 147);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Madimi One', sans-serif;
+  font-size: 18px;
+}
+
+a {
+  color: var(--primaryColor);
+}
+
+a:hover {
+  color: var(--primaryColorLight);
+}
+
+li {
+  list-style-type: none;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.small {
+  font-size: 0.75rem;
+}
+
+#map {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+}
+
+#sidebar {
+  padding: 1rem;
+  z-index: 1000;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
+}
+
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}
+
+.leaflet-container {
+  background-color: white;
+}
+
+.gameMarker {
+  height: 100%;
+  border: 2px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+.gameMarker div {
+  height: 75%;
+  width: 75%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.gameMarker::after {
+  content: '';
+  display: block;
+  height: 0;
+  width: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid var(--color, var(--primaryColor));
+  position: absolute;
+  margin-bottom: -9px;
+  z-index: -1;
+  bottom: 0;
+}
+
+.gameMarker:not(.startingPoint) {
+  cursor: grab;
+  border-color: var(--color, var(--primaryColor));
+}
+
+.gameMarker:has(.leaflet-drag-target) {
+  cursor: grabbing;
+}
+
+.gameMarker.startingPoint {
+  cursor: not-allowed;
+  --color: black;
+}
+
+.gameMarker.startingPoint::before {
+  content: '🔒';
+  color: transparent;
+  text-shadow: 0 0 0 white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  background-color: black;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewPicto {
+  display: inline-block;
+  height: 80px;
+  max-width: 100%;
+  filter: grayscale(1);
+  -webkit-filter: grayscale(1);
+}
+
+.mapBackground {
+  transition: opacity 1s ease;
+  filter: grayscale(1);
+}
+
+.distanceTooltip {
+  border: 0;
+  background-color: white;
+  padding: 0 3px;
+  box-shadow: none;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.distanceTooltip .content {
+  color: var(--color, black);
+}
+
+.distanceTooltip:before {
+  display: none;
+}
+
+button {
+  font-family: 'Madimi One';
+  color: black;
+  font-size: 24px;
+  padding: 15px;
+  border: 2px solid var(--primaryColor);
+  border-radius: 3px;
+  transition: 0.2s all ease;
+  margin: 30px 0 15px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--primaryColorLight);
+}
+
+button:hover {
+  border: 2px solid var(--primaryColorLight);
+  background-color: var(--primaryColorLighter);
+  box-shadow: 0 0 3px 3px #ddd;
+}
+
+#finalScore {
+  font-weight: bold;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.leaflet-control-graphicscale {
+  font-size: 16px;
+}
+
+.leaflet-control-graphicscale .division {
+  background-color: white;
+}
+
+.leaflet-control-graphicscale .division .line {
+  height: 12px;
+}
+
+.pointNameTooltip {
+  background-color: transparent;
+  border: 0;
+  padding: 2px;
+  box-shadow: none;
+  text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white, 2px 0 0 white, 2px 2px 0 white,
+    0 2px 0 white, -2px 2px 0 white, -2px 0 0 white;
+}
+
+.pointNameTooltip::before {
+  display: none;
+}
+
+#pointScores {
+  margin-bottom: 2rem;
+}
+
+.pointScore {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pointScore:not(:last-child) {
+  display: none;
+}
+
+.pointScore {
+  color: var(--color, black);
+}
+
+.pointScore .dist {
+  margin-left: auto;
+}
+
+li:has(.point) {
+  margin: 0.5rem 0;
+}
+
+.point {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.point .gameMarker {
+  width: 40px;
+  height: 40px;
+}
+
+.currentPoint {
+  margin: 0.5rem 0 1.5rem;
+}
+
+.currentPoint .gameMarker {
+  width: 80px;
+  height: 80px;
+}
+
+.currentPoint {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+#panel .gameMarker {
+  flex-shrink: 0;
+  position: relative;
+}
+
+#panel .gameMarker::after {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .score .detailedResults {
+    display: none;
+  }
+
+  footer {
+    display: none;
+  }
+
+  .pointNameTooltip {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  main {
+    flex-direction: row;
+  }
+
+  #sidebar {
+    flex-basis: 500px;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  li.pointScore:not(:last-child) {
+    display: flex;
+  }
+}
