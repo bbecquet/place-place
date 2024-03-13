@@ -289,6 +289,10 @@ li:has(.point) {
   footer {
     display: none;
   }
+
+  .pointNameTooltip {
+    font-size: 10px;
+  }
 }
 
 @media (min-width: 768px) {
