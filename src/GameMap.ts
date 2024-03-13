@@ -113,6 +113,8 @@ class GameMap {
         className: 'pointNameTooltip',
         direction: 'top',
         offset: [0, -this.iconSize - 5],
+        opacity: 1,
+        permanent: true,
       })
       .on('dragend', evt => {
         // TODO: avoid this on-place modification of the model
@@ -230,6 +232,7 @@ class GameMap {
           /* @ts-ignore leaflet-path doesn't have Typescript declarations */
           .setText(formatDistance(latLngs[0].distanceTo(latLngs[1]), true), {
             center: true,
+            attributes: { fill: 'silver', dy: '-4px' },
           })
       )
     })
