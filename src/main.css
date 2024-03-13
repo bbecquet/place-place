@@ -1,6 +1,13 @@
 @import '../node_modules/leaflet/dist/leaflet.css';
 @import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Days+One&family=Madimi+One&display=swap');
+
+@font-face {
+  font-family: 'Madimi One';
+  src: url('/fonts/MadimiOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --primaryColor: rgb(55, 139, 107);
@@ -20,8 +27,6 @@ body {
 
 body {
   font-family: 'Madimi One', sans-serif;
-  font-weight: 400;
-  font-style: normal;
   font-size: 18px;
 }
 
@@ -163,6 +168,7 @@ main {
 }
 
 button {
+  font-family: 'Madimi One';
   color: black;
   font-size: 24px;
   padding: 15px;
