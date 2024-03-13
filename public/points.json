@@ -46,5 +46,11 @@
     "name": "Opéra Garnier",
     "position": [48.87181, 2.33181],
     "picto": "pictos/opera.svg"
+  },
+  {
+    "id": "sacrecoeur",
+    "name": "Sacré-Cœur",
+    "position": [48.88662, 2.34302],
+    "picto": "pictos/sacre-coeur.svg"
   }
 ]
