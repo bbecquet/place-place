@@ -6,7 +6,7 @@ import { pointPanelItem } from './point'
 class Panel {
   panel: HTMLElement
   onStart: () => void
-  onRestart: () => void
+  onRestart: (pickNew: boolean) => void
   onEnd: () => void
   onJumpToResult: () => void
 
@@ -17,7 +17,12 @@ class Panel {
       onRestart,
       onEnd,
       onJumpToResult,
-    }: { onStart: () => void; onRestart: () => void; onEnd: () => void; onJumpToResult: () => void }
+    }: {
+      onStart: () => void
+      onRestart: (pickNew: boolean) => void
+      onEnd: () => void
+      onJumpToResult: () => void
+    }
   ) {
     this.panel = element
     this.onStart = onStart
@@ -82,9 +87,13 @@ class Panel {
     document.getElementById('speedupScoring')?.remove()
     this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
-        <button id="replayButton">${restartIcon} Rejouer</button>
+        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départs</div></div></button>
+        <button id="replayButtonNew">${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div></button>
     `
-    document.getElementById('replayButton')?.addEventListener('click', this.onRestart)
+    document.getElementById('replayButton')?.addEventListener('click', () => this.onRestart(false))
+    document
+      .getElementById('replayButtonNew')
+      ?.addEventListener('click', () => this.onRestart(true))
   }
 
   updateScoringDistance(point: GamePoint, distance: number, color: string) {

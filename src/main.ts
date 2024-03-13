@@ -1,5 +1,5 @@
 import L, { LatLng } from 'leaflet'
-import { shuffleArray } from './utils'
+import { getRememberedPoints, rememberPoints, forgetPreviousPoints, shuffleArray } from './utils'
 import { Point, GamePoint } from './types'
 import GameMap from './GameMap'
 import Panel from './Panel'
@@ -40,7 +40,7 @@ class Game {
 
     this.panel = new Panel(document.getElementById('panel') as HTMLElement, {
       onStart: () => this.startGame(),
-      onRestart: () => this.initGame(),
+      onRestart: (pickNew: boolean) => this.initGame(pickNew),
       onEnd: () => this.validateInput(),
       onJumpToResult: () => this.jumpToResult(),
     })
@@ -48,9 +48,13 @@ class Game {
     this.initGame()
   }
 
-  initGame() {
+  initGame(pickNew = false) {
     this.map.toggleBackground(false)
     this.map.clear()
+
+    if (pickNew) {
+      forgetPreviousPoints()
+    }
 
     const { startPoints, guessingPoints } = this.preparePoints(this.points, 2)
     this.startPoints = startPoints
@@ -73,14 +77,32 @@ class Game {
 
   preparePoints(points: Point[], nbStart: number) {
     const shuffledPoints = shuffleArray(points)
+    const pointsFromUrl = getRememberedPoints()
+      .map(id => shuffledPoints.find(pt => pt.id === id))
+      .filter(pt => pt) as Point[]
+
+    let startPoints: Point[], guessingPoints
+    if (pointsFromUrl.length >= 2) {
+      startPoints = pointsFromUrl
+      guessingPoints = shuffledPoints.filter(pt => !startPoints.find(sp => sp.id === pt.id))
+    } else {
+      startPoints = shuffledPoints.slice(0, nbStart)
+      guessingPoints = shuffledPoints.slice(nbStart)
+    }
+
+    rememberPoints(startPoints)
 
     return {
-      startPoints: shuffledPoints
-        .slice(0, nbStart)
-        .map(pt => ({ ...pt, isStarting: true, userPosition: L.latLng(pt.position) })),
-      guessingPoints: shuffledPoints
-        .slice(nbStart)
-        .map(pt => ({ ...pt, isStarting: false, userPosition: L.latLng(pt.position) })),
+      startPoints: startPoints.map(pt => ({
+        ...pt,
+        isStarting: true,
+        userPosition: L.latLng(pt.position),
+      })),
+      guessingPoints: guessingPoints.map(pt => ({
+        ...pt,
+        isStarting: false,
+        userPosition: L.latLng(pt.position),
+      })),
     }
   }
 

@@ -1,4 +1,5 @@
 import { LatLng } from 'leaflet'
+import { Point } from './types'
 
 export const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(n, max))
 
@@ -62,3 +63,18 @@ export const last = <T>(array: Array<T>) => array[array.length - 1]
 const mobileMediaQuery = window.matchMedia('(max-width: 768px)')
 
 export const isMobile = () => mobileMediaQuery.matches
+
+export const rememberPoints = (points: Point[]) => {
+  window.location.hash = points.map(pt => pt.id).join('|')
+}
+
+export const getRememberedPoints = (): string[] => {
+  if (!window.location.hash) {
+    return []
+  }
+  return window.location.hash.slice(1).split('|')
+}
+
+export const forgetPreviousPoints = () => {
+  window.location.hash = ''
+}
