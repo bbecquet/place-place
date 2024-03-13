@@ -20,6 +20,13 @@ jobs:
           npm ci
           npm run build
 
+      - name: Replace root url in HTML
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: _ROOT_URL_
+          replace: 'https://bbecquet.github.io'
+          include: 'public/index.html'
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
