@@ -1,3 +1,3 @@
 # Place positioning game
 
-![Screenshot](images/screenshot.png)
+![Screenshot](public/images/screenshot.png)
