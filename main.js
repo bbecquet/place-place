@@ -16817,7 +16817,7 @@
 	        (_a = document.getElementById('speedupScoring')) === null || _a === void 0 ? void 0 : _a.remove();
 	        this.panel.innerHTML += `
         <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
-        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départs</div></div></button>
+        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div></button>
         <button id="replayButtonNew">${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div></button>
     `;
 	        (_b = document.getElementById('replayButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.onRestart(false));
