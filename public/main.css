@@ -1,9 +1,9 @@
-@import '../node_modules/leaflet/dist/leaflet.css';
-@import '../node_modules/@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css';
+@import 'leaflet.css';
+@import 'Leaflet.GraphicScale.min.css';
 
 @font-face {
   font-family: 'Madimi One';
-  src: url('/fonts/MadimiOne-Regular.ttf') format('truetype');
+  src: url('fonts/MadimiOne-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

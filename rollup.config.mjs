@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript'
 export default {
   input: 'src/main.ts',
   output: {
-    file: 'dist/main.js',
+    file: 'public/main.js',
     format: 'iife',
   },
   plugins: [resolve(), commonjs(), typescript()],
