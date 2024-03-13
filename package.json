@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c --environment INCLUDE_DEPS",
     "watch": "rollup -c --environment INCLUDE_DEPS -w",
-    "svgo": "svgo pictos/*.svg"
+    "svgo": "svgo public/pictos/*.svg"
   },
   "keywords": [
     "game",
