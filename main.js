@@ -16887,6 +16887,7 @@
 	    }
 	    startGame() {
 	        this.activeGame = true;
+	        rememberPoints(this.startPoints);
 	        this.advancePoint();
 	    }
 	    preparePoints(points, nbStart) {
@@ -16903,7 +16904,6 @@
 	            startPoints = shuffledPoints.slice(0, nbStart);
 	            guessingPoints = shuffledPoints.slice(nbStart);
 	        }
-	        rememberPoints(startPoints);
 	        return {
 	            startPoints: startPoints.map(pt => ({
 	                ...pt,
