@@ -72,6 +72,7 @@ class Game {
 
   startGame() {
     this.activeGame = true
+    rememberPoints(this.startPoints)
     this.advancePoint()
   }
 
@@ -89,8 +90,6 @@ class Game {
       startPoints = shuffledPoints.slice(0, nbStart)
       guessingPoints = shuffledPoints.slice(nbStart)
     }
-
-    rememberPoints(startPoints)
 
     return {
       startPoints: startPoints.map(pt => ({
