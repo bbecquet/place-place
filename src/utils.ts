@@ -58,8 +58,6 @@ export const shuffleArray = <T>(array: Array<T>) => {
   return a
 }
 
-export const last = <T>(array: Array<T>) => array[array.length - 1]
-
 const mobileMediaQuery = window.matchMedia('(max-width: 768px)')
 
 export const isMobile = () => mobileMediaQuery.matches
