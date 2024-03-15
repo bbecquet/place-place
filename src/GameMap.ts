@@ -57,9 +57,11 @@ class GameMap {
 
     this.map = L.map(element, {
       ...options,
+      minZoom: 11,
       zoomSnap: 0.1,
-      attributionControl: false,
       wheelPxPerZoomLevel: 90,
+      boxZoom: false,
+      attributionControl: false,
     })
       .addControl(scale)
       .addLayer(this.background)

@@ -26,8 +26,9 @@ class Game {
     this.map = new GameMap(
       document.getElementById('map') as HTMLElement,
       {
-        center: [48.85, 2.35],
+        center: L.latLngBounds(area.bounds).getCenter(),
         zoom: 12,
+        maxBounds: area.bounds,
       },
       evt => {
         if (!this.activeGame) {
