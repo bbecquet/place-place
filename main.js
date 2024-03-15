@@ -16599,9 +16599,11 @@
 	        });
 	        this.map = L$1.map(element, {
 	            ...options,
+	            minZoom: 11,
 	            zoomSnap: 0.1,
-	            attributionControl: false,
 	            wheelPxPerZoomLevel: 90,
+	            boxZoom: false,
+	            attributionControl: false,
 	        })
 	            .addControl(scale)
 	            .addLayer(this.background)
@@ -16851,8 +16853,9 @@
 	        this.currentPointIndex = -1;
 	        this.skipValidation = false;
 	        this.map = new GameMap(document.getElementById('map'), {
-	            center: [48.85, 2.35],
+	            center: L$1.latLngBounds(area.bounds).getCenter(),
 	            zoom: 12,
+	            maxBounds: area.bounds,
 	        }, evt => {
 	            if (!this.activeGame) {
 	                return;
