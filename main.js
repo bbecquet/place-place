@@ -16791,11 +16791,11 @@
 	            });
 	        }
 	    }
-	    setNewGame(points) {
+	    setNewGame(placeName, points) {
 	        var _a;
 	        this.panel.className = 'new';
 	        this._setContent(`
-        <p>Ceci est une carte de <b>Paris</b>.</p>
+        <p>Ceci est une carte de <b>${placeName}</b>.</p>
         <p>Les points suivants sont déjà placés&nbsp:</p>
         <ul>${points.map(pt => `<li>${pointPanelItem(pt)}</li>`).join('')}</ul>
         <p>Saurez-vous placer les autres ?</p>
@@ -16843,8 +16843,8 @@
 	}
 
 	class Game {
-	    constructor(points) {
-	        this.points = points;
+	    constructor(area) {
+	        this.area = area;
 	        this.startPoints = [];
 	        this.guessingPoints = [];
 	        this.activeGame = false;
@@ -16874,12 +16874,12 @@
 	        if (pickNew) {
 	            forgetPreviousPoints();
 	        }
-	        const { startPoints, guessingPoints } = this.preparePoints(this.points, 2);
+	        const { startPoints, guessingPoints } = this.preparePoints(this.area.points, 2);
 	        this.startPoints = startPoints;
 	        this.guessingPoints = guessingPoints;
 	        this.currentPointIndex = -1;
 	        this.skipValidation = false;
-	        this.panel.setNewGame(this.startPoints);
+	        this.panel.setNewGame(this.area.name, this.startPoints);
 	        startPoints.forEach(startPoint => {
 	            this.map.createMarker(startPoint);
 	        });
@@ -16965,10 +16965,10 @@
 	    }
 	}
 	window.onload = function () {
-	    fetch('points.json')
+	    fetch('game.json')
 	        .then(response => response.json())
-	        .then((points) => {
-	        new Game(points);
+	        .then((area) => {
+	        new Game(area);
 	    });
 	};
 

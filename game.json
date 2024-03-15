@@ -1,0 +1,90 @@
+{
+  "name": "Paris",
+  "bounds": [
+    [],
+    []
+  ],
+  "points": [
+    {
+      "id": "eiffel",
+      "name": "Tour Eiffel",
+      "position": [
+        48.858333,
+        2.294167
+      ],
+      "picto": "pictos/tour-eiffel.svg"
+    },
+    {
+      "id": "louvre",
+      "name": "Pyramide du Louvre",
+      "position": [
+        48.860932,
+        2.335902
+      ],
+      "picto": "pictos/pyramide-du-louvre.svg"
+    },
+    {
+      "id": "arc",
+      "name": "Arc de Triomphe",
+      "position": [
+        48.8738,
+        2.295
+      ],
+      "picto": "pictos/arc-de-triomphe.svg"
+    },
+    {
+      "id": "nd",
+      "name": "Notre-Dame",
+      "position": [
+        48.853056,
+        2.349722
+      ],
+      "picto": "pictos/notre-dame.svg"
+    },
+    {
+      "id": "pompompidou",
+      "name": "Centre Pompidou",
+      "position": [
+        48.860653,
+        2.352411
+      ],
+      "picto": "pictos/pompidou.svg"
+    },
+    {
+      "id": "pantheon",
+      "name": "Panthéon",
+      "position": [
+        48.8461111,
+        2.345833
+      ],
+      "picto": "pictos/pantheon.svg"
+    },
+    {
+      "id": "repu",
+      "name": "Place de la République",
+      "position": [
+        48.8675,
+        2.36384
+      ],
+      "picto": "pictos/republique.svg"
+    },
+    {
+      "id": "opera",
+      "name": "Opéra Garnier",
+      "position": [
+        48.87181,
+        2.33181
+      ],
+      "picto": "pictos/opera.svg"
+    },
+    {
+      "id": "sacrecoeur",
+      "name": "Sacré-Cœur",
+      "position": [
+        48.88662,
+        2.34302
+      ],
+      "picto": "pictos/sacre-coeur.svg"
+    }
+  ]
+}
