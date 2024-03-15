@@ -11,3 +11,9 @@ export type GamePoint = Point & {
   userPosition: LatLng
   isStarting: boolean
 }
+
+export type Area = {
+  name: string
+  points: Point[]
+  bounds: [[number, number], [number, number]]
+}

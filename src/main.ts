@@ -1,11 +1,11 @@
 import L, { LatLng } from 'leaflet'
 import { getRememberedPoints, rememberPoints, forgetPreviousPoints, shuffleArray } from './utils'
-import { Point, GamePoint } from './types'
+import { Point, GamePoint, Area } from './types'
 import GameMap from './GameMap'
 import Panel from './Panel'
 
 class Game {
-  points: Point[]
+  area: Area
   guessingPoints: GamePoint[]
   startPoints: GamePoint[]
   map: GameMap
@@ -15,8 +15,8 @@ class Game {
   skipValidation: boolean
   waitHandle: any
 
-  constructor(points: Point[]) {
-    this.points = points
+  constructor(area: Area) {
+    this.area = area
     this.startPoints = []
     this.guessingPoints = []
     this.activeGame = false
@@ -56,13 +56,13 @@ class Game {
       forgetPreviousPoints()
     }
 
-    const { startPoints, guessingPoints } = this.preparePoints(this.points, 2)
+    const { startPoints, guessingPoints } = this.preparePoints(this.area.points, 2)
     this.startPoints = startPoints
     this.guessingPoints = guessingPoints
     this.currentPointIndex = -1
     this.skipValidation = false
 
-    this.panel.setNewGame(this.startPoints)
+    this.panel.setNewGame(this.area.name, this.startPoints)
 
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint)
@@ -164,9 +164,9 @@ class Game {
 }
 
 window.onload = function () {
-  fetch('points.json')
+  fetch('game.json')
     .then(response => response.json())
-    .then((points: Point[]) => {
-      new Game(points)
+    .then((area: Area) => {
+      new Game(area)
     })
 }

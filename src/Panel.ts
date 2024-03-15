@@ -59,10 +59,10 @@ class Panel {
     }
   }
 
-  setNewGame(points: GamePoint[]) {
+  setNewGame(placeName: string, points: GamePoint[]) {
     this.panel.className = 'new'
     this._setContent(`
-        <p>Ceci est une carte de <b>Paris</b>.</p>
+        <p>Ceci est une carte de <b>${placeName}</b>.</p>
         <p>Les points suivants sont déjà placés&nbsp:</p>
         <ul>${points.map(pt => `<li>${pointPanelItem(pt)}</li>`).join('')}</ul>
         <p>Saurez-vous placer les autres ?</p>
