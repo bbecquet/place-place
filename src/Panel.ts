@@ -10,15 +10,14 @@ const ce = (
   attributes: Record<string, string>,
   content?: DomContent
 ): HTMLElement => {
-  console.log('plup')
-  const elt = document.createElement(tagName)
+  const element = document.createElement(tagName)
   Object.entries(attributes).forEach(([k, v]) => {
-    elt.setAttribute(k, v)
+    element.setAttribute(k, v)
   })
   if (content) {
-    ec(elt, content)
+    ec(element, content)
   }
-  return elt
+  return element
 }
 
 const ec = (elt: HTMLElement, content: DomContent) => {
@@ -28,7 +27,7 @@ const ec = (elt: HTMLElement, content: DomContent) => {
       ec(elt, n)
     })
   } else if (typeof content === 'string') {
-    elt.innerHTML = content
+    elt.innerHTML += content
   } else {
     elt.appendChild(content)
   }
@@ -62,19 +61,15 @@ class Panel {
     this.onJumpToResult = onJumpToResult
   }
 
-  _setContent = (content: DomContent) => {
-    ec(this.panel, content)
-  }
-
   setMessage(status: 'lastPoint' | 'scoring') {
     if (status === 'lastPoint') {
-      this._setContent([
+      ec(this.panel, [
         ce('p', {}, 'Vous pouvez encore changer la position des points avant de les vérifier.'),
         ce('button', { id: 'finishButton' }, `${checkIcon} Vérifier les positions`),
       ])
       document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
-      this._setContent([
+      ec(this.panel, [
         ce('div', { class: 'detailedResults' }, [
           ce('ul', { id: 'pointScores' }),
           ce('button', { id: 'speedupScoring' }, `${fastForwardIcon} Score final`),
@@ -89,7 +84,7 @@ class Panel {
 
   setNewGame(placeName: string, points: GamePoint[]) {
     this.panel.className = 'new'
-    this._setContent([
+    ec(this.panel, [
       ce('p', {}, `Ceci est une carte de <b>${placeName}</b>.`),
       ce('p', {}, `Les points suivants sont déjà placés&nbsp:`),
       ce(
@@ -105,7 +100,7 @@ class Panel {
 
   setPoint(point: GamePoint, isFirst?: boolean) {
     this.panel.className = 'placing'
-    this._setContent([
+    ec(this.panel, [
       ce('p', {}, 'Cliquez sur la carte pour placer'),
       pointPanelItem(point, 'currentPoint'),
       ce(
@@ -136,9 +131,8 @@ class Panel {
     let dist = document.querySelector('#pointScore_' + point.id + ' .dist')
     if (!dist) {
       dist = ce('div', { class: 'dist' })
-      const list = document.getElementById('pointScores') as HTMLElement
       ec(
-        list,
+        document.getElementById('pointScores') as HTMLElement,
         ce('li', { id: 'pointScore_' + point.id, class: 'pointScore' }, [
           pointPanelItem(point),
           dist,

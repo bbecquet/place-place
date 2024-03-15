@@ -26,12 +26,10 @@ export function animatePoint(
       start = timeStamp
     }
     const p = interpolateLatLng(p1, p2, duration, timeStamp - start)
-
     if (p.equals(p2)) {
       callback(p2, true)
       return
     }
-
     callback(p)
     requestAnimationFrame(animationFrame)
   }
