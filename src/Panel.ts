@@ -114,9 +114,4 @@ class Panel {
   }
 }
 
-const tpl_placePoint = `
-  <img class="previewPicto" src="{picto}" alt="" />
-  <p>Cliquez pour placer <b>{name}</b></p>
-`
-
 export default Panel
