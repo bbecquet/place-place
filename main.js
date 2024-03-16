@@ -16564,16 +16564,44 @@
 
 	var rgbBasis = rgbSpline(basis$1);
 
+	const elt = (tagName, attributes, content) => {
+	    const element = document.createElement(tagName);
+	    Object.entries(attributes).forEach(([k, v]) => {
+	        element.setAttribute(k, v);
+	    });
+	    if (content) {
+	        setContent(element, content);
+	    }
+	    return element;
+	};
+	const appendTo = (element, content) => {
+	    if (Array.isArray(content)) {
+	        content.forEach(n => {
+	            appendTo(element, n);
+	        });
+	    }
+	    else if (typeof content === 'string') {
+	        element.innerHTML += content;
+	    }
+	    else {
+	        element.appendChild(content);
+	    }
+	};
+	const setContent = (element, content, append) => {
+	    if (!append) {
+	        element.replaceChildren('');
+	    }
+	    appendTo(element, content);
+	};
+
 	function getImage(point, color) {
-	    return `<div class="gameMarker ${point.isStarting ? 'startingPoint' : ''}" ${color ? 'style="--color:' + color + ';"' : ''}>
-    <div style="background-image: url(${point.picto});"></div>
-  </div>`;
+	    return elt('div', {
+	        class: `gameMarker ${point.isStarting ? 'startingPoint' : ''}`,
+	        style: color ? `--color:${color};` : '',
+	    }, [elt('div', { style: `background-image: url(${point.picto});` })]);
 	}
 	function pointPanelItem(point, className = '') {
-	    return `<div class="point ${className}">
-    ${getImage(point)}
-    ${point.name}
-  </div>`;
+	    return elt('div', { class: `point ${className}` }, [getImage(point), point.name]);
 	}
 
 	const meshStyle = {
@@ -16758,15 +16786,6 @@
 
 	class Panel {
 	    constructor(element, { onStart, onRestart, onEnd, onJumpToResult, }) {
-	        this._setContent = (content) => {
-	            if (typeof content === 'string') {
-	                this.panel.innerHTML = content;
-	            }
-	            else {
-	                this.panel.innerHTML = '';
-	                this.panel.appendChild(content);
-	            }
-	        };
 	        this.panel = element;
 	        this.onStart = onStart;
 	        this.onRestart = onRestart;
@@ -16776,17 +16795,19 @@
 	    setMessage(status) {
 	        var _a, _b;
 	        if (status === 'lastPoint') {
-	            this._setContent(`
-        <p>Vous pouvez encore changer la position des points avant de les vérifier.</p>
-        <button id="finishButton">${checkIcon} Vérifier les positions</button>`);
+	            setContent(this.panel, [
+	                elt('p', {}, 'Vous pouvez encore changer la position des points avant de les vérifier.'),
+	                elt('button', { id: 'finishButton' }, `${checkIcon} Vérifier les positions`),
+	            ]);
 	            (_a = document.getElementById('finishButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.onEnd);
 	        }
 	        else if (status === 'scoring') {
-	            this._setContent(`
-        <div class="detailedResults">
-          <ul id="pointScores"></ul>
-          <button id="speedupScoring">${fastForwardIcon} Score final</button>
-        </div>`);
+	            setContent(this.panel, [
+	                elt('div', { class: 'detailedResults' }, [
+	                    elt('ul', { id: 'pointScores' }),
+	                    elt('button', { id: 'speedupScoring' }, `${fastForwardIcon} Score final`),
+	                ]),
+	            ]);
 	            (_b = document.getElementById('speedupScoring')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', evt => {
 	                this.onJumpToResult();
 	                evt.target.remove();
@@ -16796,32 +16817,34 @@
 	    setNewGame(placeName, points) {
 	        var _a;
 	        this.panel.className = 'new';
-	        this._setContent(`
-        <p>Ceci est une carte de <b>${placeName}</b>.</p>
-        <p>Les points suivants sont déjà placés&nbsp:</p>
-        <ul>${points.map(pt => `<li>${pointPanelItem(pt)}</li>`).join('')}</ul>
-        <p>Saurez-vous placer les autres ?</p>
-        <button id="startButton">${startIcon} Démarrer</button>`);
+	        setContent(this.panel, [
+	            elt('p', {}, `Ceci est une carte de <b>${placeName}</b>.`),
+	            elt('p', {}, `Les points suivants sont déjà placés&nbsp:`),
+	            elt('ul', {}, points.map(pt => elt('li', {}, pointPanelItem(pt)))),
+	            elt('p', {}, `Saurez-vous placer les autres ?`),
+	            elt('button', { id: 'startButton' }, `${startIcon} Démarrer</button>`),
+	        ]);
 	        (_a = document.getElementById('startButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.onStart);
 	    }
 	    setPoint(point, isFirst) {
 	        this.panel.className = 'placing';
-	        this._setContent(`
-    <p>Cliquez sur la carte pour placer</p>
-    ${pointPanelItem(point, 'currentPoint')}
-    ${!isFirst
-            ? '<p class="small">Vous pouvez aussi déplacer les points précédents.</p>'
-            : '<p class="small">Vous pouvez déplacer et zoomer/dézoomer la carte.</p>'}`);
+	        setContent(this.panel, [
+	            elt('p', {}, 'Cliquez sur la carte pour placer'),
+	            pointPanelItem(point, 'currentPoint'),
+	            elt('p', { class: 'small' }, !isFirst
+	                ? 'Vous pouvez aussi déplacer les points précédents.'
+	                : 'Vous pouvez déplacer et zoomer/dézoomer la carte.'),
+	        ]);
 	    }
 	    setScore(score) {
 	        var _a, _b, _c;
 	        this.panel.className = 'score';
 	        (_a = document.getElementById('speedupScoring')) === null || _a === void 0 ? void 0 : _a.remove();
-	        this.panel.innerHTML += `
-        <div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>
-        <button id="replayButton">${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div></button>
-        <button id="replayButtonNew">${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div></button>
-    `;
+	        setContent(this.panel, [
+	            `<div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>`,
+	            elt('button', { id: 'replayButton' }, `${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div>`),
+	            elt('button', { id: 'replayButtonNew' }, `${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div>`),
+	        ], true);
 	        (_b = document.getElementById('replayButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.onRestart(false));
 	        (_c = document
 	            .getElementById('replayButtonNew')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => this.onRestart(true));
@@ -16829,18 +16852,11 @@
 	    updateScoringDistance(point, distance, color) {
 	        let dist = document.querySelector('#pointScore_' + point.id + ' .dist');
 	        if (!dist) {
-	            const list = document.getElementById('pointScores');
-	            const li = document.createElement('li');
-	            li.id = 'pointScore_' + point.id;
-	            li.className = 'pointScore';
-	            dist = document.createElement('div');
-	            dist.className = 'dist';
-	            li.innerHTML = pointPanelItem(point);
-	            li.appendChild(dist);
-	            list.appendChild(li);
+	            dist = elt('div', { class: 'dist' });
+	            setContent(document.getElementById('pointScores'), elt('li', { id: 'pointScore_' + point.id, class: 'pointScore' }, [pointPanelItem(point), dist]), true);
 	        }
 	        dist.parentElement.style.cssText = '--color:' + color;
-	        dist.innerHTML = formatDistance(distance, true);
+	        setContent(dist, formatDistance(distance, true));
 	    }
 	}
 
