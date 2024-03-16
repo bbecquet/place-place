@@ -1,18 +1,19 @@
 import { GamePoint } from './types'
+import { elt } from './dom'
 
 function getImage(point: GamePoint, color?: string) {
-  return `<div class="gameMarker ${point.isStarting ? 'startingPoint' : ''}" ${
-    color ? 'style="--color:' + color + ';"' : ''
-  }>
-    <div style="background-image: url(${point.picto});"></div>
-  </div>`
+  return elt(
+    'div',
+    {
+      class: `gameMarker ${point.isStarting ? 'startingPoint' : ''}`,
+      style: color ? `--color:${color};` : '',
+    },
+    [elt('div', { style: `background-image: url(${point.picto});` })]
+  )
 }
 
 function pointPanelItem(point: GamePoint, className = '') {
-  return `<div class="point ${className}">
-    ${getImage(point)}
-    ${point.name}
-  </div>`
+  return elt('div', { class: `point ${className}` }, [getImage(point), point.name])
 }
 
-export { getImage, pointPanelItem }
+export { getImage, pointPanelItem as pointItem }
