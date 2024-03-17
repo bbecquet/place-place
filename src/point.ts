@@ -5,7 +5,7 @@ function getImage(point: GamePoint, color?: string) {
   return elt(
     'div',
     {
-      class: `gameMarker ${point.isStarting ? 'startingPoint' : ''}`,
+      class: `pointImage ${point.isStarting ? 'startingPoint' : ''}`,
       style: color ? `--color:${color};` : '',
     },
     [elt('div', { style: `background-image: url(${point.picto});` })]

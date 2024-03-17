@@ -73,7 +73,7 @@ main {
   background-color: white;
 }
 
-.gameMarker {
+.pointImage {
   height: 100%;
   border: 2px solid;
   border-radius: 50%;
@@ -83,7 +83,7 @@ main {
   background-color: white;
 }
 
-.gameMarker div {
+.pointImage div {
   height: 75%;
   width: 75%;
   background-size: contain;
@@ -91,7 +91,7 @@ main {
   background-position: center;
 }
 
-.gameMarker::after {
+.pointImage::after {
   content: '';
   display: block;
   height: 0;
@@ -105,21 +105,21 @@ main {
   bottom: 0;
 }
 
-.gameMarker:not(.startingPoint) {
+.pointImage:not(.startingPoint) {
   cursor: grab;
   border-color: var(--color, var(--primaryColor));
 }
 
-.gameMarker:has(.leaflet-drag-target) {
+.pointImage:has(.leaflet-drag-target) {
   cursor: grabbing;
 }
 
-.gameMarker.startingPoint {
+.pointImage.startingPoint {
   cursor: not-allowed;
   --color: black;
 }
 
-.gameMarker.startingPoint::before {
+.pointImage.startingPoint::before {
   content: '🔒';
   color: transparent;
   text-shadow: 0 0 0 white;
@@ -254,7 +254,7 @@ li:has(.point) {
   gap: 1rem;
 }
 
-.point .gameMarker {
+.point .pointImage {
   width: 40px;
   height: 40px;
 }
@@ -265,17 +265,17 @@ li:has(.point) {
   margin: 0.5rem 0 1.5rem;
 }
 
-.currentPoint .gameMarker {
+.currentPoint .pointImage {
   width: 80px;
   height: 80px;
 }
 
-#panel .gameMarker {
+#panel .pointImage {
   flex-shrink: 0;
   position: relative;
 }
 
-#panel .gameMarker::after {
+#panel .pointImage::after {
   display: none;
 }
 
