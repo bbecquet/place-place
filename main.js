@@ -16852,7 +16852,7 @@
 	            elt('p', {}, `Les points suivants sont déjà placés&nbsp:`),
 	            elt('ul', {}, points.map(pt => elt('li', {}, pointPanelItem(pt)))),
 	            elt('p', {}, `Saurez-vous placer les autres ?`),
-	            elt('button', { id: 'startButton' }, `${startIcon} Démarrer</button>`),
+	            elt('button', { id: 'startButton' }, `${startIcon} Jouer</button>`),
 	        ]);
 	        (_a = document.getElementById('startButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.onStart);
 	    }
