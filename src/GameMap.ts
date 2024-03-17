@@ -17,6 +17,7 @@ import { GamePoint } from './types'
 import { animatePoint, formatDistance, clamp, isMobile } from './utils'
 import { interpolateRgbBasis } from 'd3-interpolate'
 import { getImage } from './point'
+import Compass from './CompassControl'
 
 const meshStyle = {
   weight: 1,
@@ -64,6 +65,7 @@ class GameMap {
       attributionControl: false,
     })
       .addControl(scale)
+      .addControl(new Compass())
       .addLayer(this.background)
       .addLayer(this.markers)
       .addLayer(this.mesh)
