@@ -112,7 +112,7 @@ class GameMap {
       autoPan: true,
     })
       .bindTooltip(point.name, {
-        className: 'pointNameTooltip',
+        className: 'pointNameTooltip textOnlyTooltip',
         direction: 'top',
         offset: [0, -this.iconSize - 5],
         opacity: 1,
@@ -173,7 +173,7 @@ class GameMap {
         fillColor: 'blue',
       })
         .bindTooltip('', {
-          className: 'distanceTooltip',
+          className: 'distanceTooltip textOnlyTooltip',
           offset: [0, -6],
           permanent: true,
           direction: 'top',

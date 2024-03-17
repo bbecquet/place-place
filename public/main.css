@@ -52,6 +52,30 @@ main {
   font-size: 0.75rem;
 }
 
+button {
+  font-family: 'Madimi One';
+  color: black;
+  font-size: 24px;
+  padding: 15px;
+  border: 2px solid var(--primaryColor);
+  border-radius: 3px;
+  transition: 0.2s all ease;
+  margin: 30px 0 15px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--primaryColorLight);
+}
+
+button:hover {
+  border: 2px solid var(--primaryColorLight);
+  background-color: var(--primaryColorLighter);
+  box-shadow: 0 0 3px 3px #ddd;
+}
+
 #map {
   flex-grow: 1;
   width: 100%;
@@ -144,45 +168,30 @@ main {
   filter: grayscale(1);
 }
 
-.distanceTooltip {
+.textOnlyTooltip {
   border: 0;
-  background-color: white;
-  padding: 0 3px;
+  background-color: transparent;
   box-shadow: none;
+  text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white, 2px 0 0 white, 2px 2px 0 white,
+    0 2px 0 white, -2px 2px 0 white, -2px 0 0 white;
+}
+
+.textOnlyTooltip::before {
+  display: none;
+}
+
+.pointNameTooltip {
+  padding: 2px;
+}
+
+.distanceTooltip {
+  padding: 0 3px;
   font-size: 1rem;
   font-weight: bold;
 }
 
 .distanceTooltip .content {
   color: var(--color, black);
-}
-
-.distanceTooltip:before {
-  display: none;
-}
-
-button {
-  font-family: 'Madimi One';
-  color: black;
-  font-size: 24px;
-  padding: 15px;
-  border: 2px solid var(--primaryColor);
-  border-radius: 3px;
-  transition: 0.2s all ease;
-  margin: 30px 0 15px;
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  background-color: var(--primaryColorLight);
-}
-
-button:hover {
-  border: 2px solid var(--primaryColorLight);
-  background-color: var(--primaryColorLighter);
-  box-shadow: 0 0 3px 3px #ddd;
 }
 
 #finalScore {
@@ -202,19 +211,6 @@ button:hover {
 
 .leaflet-control-graphicscale .division .line {
   height: 12px;
-}
-
-.pointNameTooltip {
-  background-color: transparent;
-  border: 0;
-  padding: 2px;
-  box-shadow: none;
-  text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white, 2px 0 0 white, 2px 2px 0 white,
-    0 2px 0 white, -2px 2px 0 white, -2px 0 0 white;
-}
-
-.pointNameTooltip::before {
-  display: none;
 }
 
 #pointScores {
