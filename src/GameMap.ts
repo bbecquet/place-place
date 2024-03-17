@@ -1,4 +1,5 @@
 import L, {
+  LatLngBounds,
   LatLngExpression,
   LayerGroup,
   LeafletMouseEvent,
@@ -147,10 +148,27 @@ class GameMap {
     this.pointToMarker = {}
   }
 
+  // Totally empiric hack to fix fit bounds for small screens,
+  // which over-zooms when the bounds is a narrow vertical rectangle.
+  // Artificially expand the bounds
+  fixBoundsForFit(bounds: LatLngBounds): LatLngBounds {
+    if (!isMobile()) {
+      return bounds
+    }
+    const wDelta = bounds.getEast() - bounds.getWest()
+    const hDelta = bounds.getNorth() - bounds.getSouth()
+    if (hDelta / wDelta < 0.9) {
+      return bounds
+    }
+    return bounds
+      .extend([bounds.getNorth(), bounds.getWest() - 0.025])
+      .extend([bounds.getSouth(), bounds.getEast() + 0.025])
+  }
+
   fit(points?: LatLngExpression[], disableAnimation?: boolean) {
     const coords = points || this.markers.getLayers().map(m => (m as Marker).getLatLng())
     const padding: PointExpression = isMobile() ? [50, 50] : [150, 150]
-    this.map.flyToBounds(L.latLngBounds(coords), {
+    this.map.flyToBounds(this.fixBoundsForFit(L.latLngBounds(coords)), {
       padding,
       animate: disableAnimation !== undefined && true ? false : undefined,
       duration: 0.5,
