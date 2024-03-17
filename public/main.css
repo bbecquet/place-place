@@ -81,14 +81,7 @@ main {
   align-items: center;
   justify-content: center;
   background-color: white;
-}
-
-.pointImage div {
-  height: 75%;
-  width: 75%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  border-color: var(--color, var(--primaryColor));
 }
 
 .pointImage::after {
@@ -105,17 +98,7 @@ main {
   bottom: 0;
 }
 
-.pointImage:not(.startingPoint) {
-  cursor: grab;
-  border-color: var(--color, var(--primaryColor));
-}
-
-.pointImage:has(.leaflet-drag-target) {
-  cursor: grabbing;
-}
-
 .pointImage.startingPoint {
-  cursor: not-allowed;
   --color: black;
 }
 
@@ -136,12 +119,24 @@ main {
   justify-content: center;
 }
 
-.previewPicto {
-  display: inline-block;
-  height: 80px;
-  max-width: 100%;
-  filter: grayscale(1);
-  -webkit-filter: grayscale(1);
+.pointImage div {
+  height: 75%;
+  width: 75%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.leaflet-marker-icon .pointImage {
+  cursor: grab;
+}
+
+.leaflet-marker-icon .pointImage:has(.leaflet-drag-target) {
+  cursor: grabbing;
+}
+
+.leaflet-marker-icon .pointImage.startingPoint {
+  cursor: not-allowed;
 }
 
 .mapBackground {
@@ -230,14 +225,11 @@ button:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--color, black);
 }
 
 .pointScore:not(:last-child) {
   display: none;
-}
-
-.pointScore {
-  color: var(--color, black);
 }
 
 .pointScore .dist {
