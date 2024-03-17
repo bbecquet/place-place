@@ -250,6 +250,7 @@ main {
 
 .pointScore .dist {
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 li:has(.point) {

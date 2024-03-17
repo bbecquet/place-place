@@ -14551,9 +14551,9 @@
 	}
 	const formatDistance = (meters, short) => {
 	    if (short && meters > 1000) {
-	        return `${(meters / 1000).toFixed(1)}&nbsp;km`;
+	        return `${(meters / 1000).toFixed(1)} km`;
 	    }
-	    return `${Math.round(meters / 10) * 10}&nbsp;m`;
+	    return `${Math.round(meters / 10) * 10} m`;
 	};
 	const shuffleArray = (array) => {
 	    const a = array.slice();
@@ -16838,10 +16838,7 @@
 	            setContent(this.panel, [
 	                elt('div', { class: 'detailedResults' }, [
 	                    elt('ul', { id: 'pointScores' }),
-	                    btn('Score final', fastForwardIcon, evt => {
-	                        this.onJumpToResult();
-	                        evt.target.remove();
-	                    }),
+	                    btn('Score final', fastForwardIcon, this.onJumpToResult, { id: 'speedupScoring' }),
 	                ]),
 	            ]);
 	        }
