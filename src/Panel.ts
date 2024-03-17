@@ -64,7 +64,7 @@ class Panel {
         points.map(pt => elt('li', {}, pointItem(pt)))
       ),
       elt('p', {}, `Saurez-vous placer les autres ?`),
-      elt('button', { id: 'startButton' }, `${startIcon} Démarrer</button>`),
+      elt('button', { id: 'startButton' }, `${startIcon} Jouer</button>`),
     ])
     document.getElementById('startButton')?.addEventListener('click', this.onStart)
   }
