@@ -63,7 +63,7 @@ class Game {
     this.currentPointIndex = -1
     this.skipValidation = false
 
-    this.panel.setNewGame(this.area.name, this.startPoints)
+    this.panel.setNewGame(this.area.name, this.startPoints, this.guessingPoints)
 
     startPoints.forEach(startPoint => {
       this.map.createMarker(startPoint)
@@ -114,7 +114,11 @@ class Game {
       this.panel.setMessage('lastPoint')
       this.map.setCursor('pointer')
     } else {
-      this.panel.setPoint(this.guessingPoints[this.currentPointIndex], this.currentPointIndex === 0)
+      this.panel.setPoint(
+        this.guessingPoints[this.currentPointIndex],
+        this.currentPointIndex + 1,
+        this.guessingPoints.length
+      )
     }
   }
 

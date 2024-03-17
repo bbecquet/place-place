@@ -51,7 +51,7 @@ class Panel {
     }
   }
 
-  setNewGame(placeName: string, points: GamePoint[]) {
+  setNewGame(placeName: string, startPoints: GamePoint[], guessingPoints: GamePoint[]) {
     this.panel.className = 'new'
     setContent(this.panel, [
       elt('p', {}, `Ceci est une carte de <b>${placeName}</b>.`),
@@ -59,22 +59,23 @@ class Panel {
       elt(
         'ul',
         {},
-        points.map(pt => elt('li', {}, pointItem(pt)))
+        startPoints.map(pt => elt('li', {}, pointItem(pt)))
       ),
-      elt('p', {}, `Saurez-vous placer les autres ?`),
+      elt('p', {}, `À vous de placer les <b>${guessingPoints.length}</b> autres&nbsp;!`),
       btn('Jouer', startIcon, this.onStart),
     ])
   }
 
-  setPoint(point: GamePoint, isFirst?: boolean) {
+  setPoint(point: GamePoint, index: number, over: number) {
     this.panel.className = 'placing'
     setContent(this.panel, [
       elt('p', {}, 'Cliquez sur la carte pour placer'),
+      `<div class="pointCounter"><span class="pointIndex">${index}</span><span class="pointNumber">/${over}</span></div>`,
       pointItem(point, 'currentPoint'),
       elt(
         'p',
         { class: 'small' },
-        !isFirst
+        index > 1
           ? 'Vous pouvez aussi déplacer les points précédents.'
           : 'Vous pouvez déplacer et zoomer/dézoomer la carte.'
       ),

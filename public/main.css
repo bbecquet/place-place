@@ -70,6 +70,7 @@ main {
   flex-grow: 1;
   flex-direction: column;
   gap: 0.5rem;
+  position: relative;
 }
 
 #panel button {
@@ -284,6 +285,25 @@ li:has(.point) {
 
 #panel .pointImage::after {
   display: none;
+}
+
+.pointCounter {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 3px;
+  color: white;
+  background-color: var(--primaryColor);
+  padding: 1px 6px;
+}
+
+.pointIndex {
+  font-weight: bold;
+  margin-right: 0.25rem;
+}
+
+.pointNumber {
+  font-size: 0.75rem;
 }
 
 @media (max-width: 767px) {
