@@ -213,6 +213,10 @@ button:hover {
   height: 12px;
 }
 
+.compass-control {
+  padding: 0.5rem;
+}
+
 #pointScores {
   margin-bottom: 2rem;
 }
