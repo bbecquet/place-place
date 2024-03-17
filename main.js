@@ -14551,9 +14551,9 @@
 	}
 	const formatDistance = (meters, short) => {
 	    if (short && meters > 1000) {
-	        return `${(meters / 1000).toFixed(1)} km`;
+	        return `${(meters / 1000).toFixed(1)}&nbsp;km`;
 	    }
-	    return `${Math.round(meters / 10) * 10} m`;
+	    return `${Math.round(meters / 10) * 10}&nbsp;m`;
 	};
 	const shuffleArray = (array) => {
 	    const a = array.slice();
