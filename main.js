@@ -16717,10 +16717,26 @@
 	        this.results.clearLayers();
 	        this.pointToMarker = {};
 	    }
+	    // Totally empiric hack to fix fit bounds for small screens,
+	    // which over-zooms when the bounds is a narrow vertical rectangle.
+	    // Artificially expand the bounds
+	    fixBoundsForFit(bounds) {
+	        if (!isMobile()) {
+	            return bounds;
+	        }
+	        const wDelta = bounds.getEast() - bounds.getWest();
+	        const hDelta = bounds.getNorth() - bounds.getSouth();
+	        if (hDelta / wDelta < 0.9) {
+	            return bounds;
+	        }
+	        return bounds
+	            .extend([bounds.getNorth(), bounds.getWest() - 0.025])
+	            .extend([bounds.getSouth(), bounds.getEast() + 0.025]);
+	    }
 	    fit(points, disableAnimation) {
 	        const coords = points || this.markers.getLayers().map(m => m.getLatLng());
 	        const padding = isMobile() ? [50, 50] : [150, 150];
-	        this.map.flyToBounds(L$1.latLngBounds(coords), {
+	        this.map.flyToBounds(this.fixBoundsForFit(L$1.latLngBounds(coords)), {
 	            padding,
 	            animate: disableAnimation !== undefined && true ? false : undefined,
 	            duration: 0.5,
