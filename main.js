@@ -16596,12 +16596,25 @@
 
 	function getImage(point, color) {
 	    return elt('div', {
-	        class: `gameMarker ${point.isStarting ? 'startingPoint' : ''}`,
+	        class: `pointImage ${point.isStarting ? 'startingPoint' : ''}`,
 	        style: color ? `--color:${color};` : '',
 	    }, [elt('div', { style: `background-image: url(${point.picto});` })]);
 	}
 	function pointPanelItem(point, className = '') {
 	    return elt('div', { class: `point ${className}` }, [getImage(point), point.name]);
+	}
+
+	class Compass extends leafletSrcExports.Control {
+	    constructor(opts) {
+	        super(opts || { position: 'bottomright' });
+	    }
+	    onAdd(map) {
+	        const img = elt('img', { src: 'images/compass.svg', class: 'compass-control' });
+	        return img;
+	    }
+	    onRemove(map) {
+	        // Nothing to do here
+	    }
 	}
 
 	const meshStyle = {
@@ -16634,6 +16647,7 @@
 	            attributionControl: false,
 	        })
 	            .addControl(scale)
+	            .addControl(new Compass())
 	            .addLayer(this.background)
 	            .addLayer(this.markers)
 	            .addLayer(this.mesh)
@@ -16674,7 +16688,7 @@
 	            autoPan: true,
 	        })
 	            .bindTooltip(point.name, {
-	            className: 'pointNameTooltip',
+	            className: 'pointNameTooltip textOnlyTooltip',
 	            direction: 'top',
 	            offset: [0, -this.iconSize - 5],
 	            opacity: 1,
@@ -16725,7 +16739,7 @@
 	                fillColor: 'blue',
 	            })
 	                .bindTooltip('', {
-	                className: 'distanceTooltip',
+	                className: 'distanceTooltip textOnlyTooltip',
 	                offset: [0, -6],
 	                permanent: true,
 	                direction: 'top',
@@ -16856,7 +16870,7 @@
 	            setContent(document.getElementById('pointScores'), elt('li', { id: 'pointScore_' + point.id, class: 'pointScore' }, [pointPanelItem(point), dist]), true);
 	        }
 	        dist.parentElement.style.cssText = '--color:' + color;
-	        setContent(dist, formatDistance(distance, true));
+	        setContent(dist, formatDistance(distance));
 	    }
 	}
 
