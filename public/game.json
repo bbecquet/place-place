@@ -64,6 +64,12 @@
       "name": "Tour Montparnasse",
       "position": [48.84214, 2.322],
       "picto": "pictos/montparnasse.svg"
+    },
+    {
+      "id": "butteschaumont",
+      "name": "Buttes-Chaumont (belvédère)",
+      "position": [48.88109, 2.38307],
+      "picto": "pictos/belvedere.svg"
     }
   ]
 }
