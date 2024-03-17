@@ -42,10 +42,7 @@ class Panel {
       setContent(this.panel, [
         elt('div', { class: 'detailedResults' }, [
           elt('ul', { id: 'pointScores' }),
-          btn('Score final', fastForwardIcon, evt => {
-            this.onJumpToResult()
-            ;(evt.target as HTMLElement).remove()
-          }),
+          btn('Score final', fastForwardIcon, this.onJumpToResult, { id: 'speedupScoring' }),
         ]),
       ])
     }
