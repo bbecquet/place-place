@@ -16846,22 +16846,23 @@
 	            ]);
 	        }
 	    }
-	    setNewGame(placeName, points) {
+	    setNewGame(placeName, startPoints, guessingPoints) {
 	        this.panel.className = 'new';
 	        setContent(this.panel, [
 	            elt('p', {}, `Ceci est une carte de <b>${placeName}</b>.`),
 	            elt('p', {}, `Les points suivants sont déjà placés&nbsp:`),
-	            elt('ul', {}, points.map(pt => elt('li', {}, pointPanelItem(pt)))),
-	            elt('p', {}, `Saurez-vous placer les autres ?`),
+	            elt('ul', {}, startPoints.map(pt => elt('li', {}, pointPanelItem(pt)))),
+	            elt('p', {}, `À vous de placer les <b>${guessingPoints.length}</b> autres&nbsp;!`),
 	            btn('Jouer', startIcon, this.onStart),
 	        ]);
 	    }
-	    setPoint(point, isFirst) {
+	    setPoint(point, index, over) {
 	        this.panel.className = 'placing';
 	        setContent(this.panel, [
 	            elt('p', {}, 'Cliquez sur la carte pour placer'),
+	            `<div class="pointCounter"><span class="pointIndex">${index}</span><span class="pointNumber">/${over}</span></div>`,
 	            pointPanelItem(point, 'currentPoint'),
-	            elt('p', { class: 'small' }, !isFirst
+	            elt('p', { class: 'small' }, index > 1
 	                ? 'Vous pouvez aussi déplacer les points précédents.'
 	                : 'Vous pouvez déplacer et zoomer/dézoomer la carte.'),
 	        ]);
@@ -16925,7 +16926,7 @@
 	        this.guessingPoints = guessingPoints;
 	        this.currentPointIndex = -1;
 	        this.skipValidation = false;
-	        this.panel.setNewGame(this.area.name, this.startPoints);
+	        this.panel.setNewGame(this.area.name, this.startPoints, this.guessingPoints);
 	        startPoints.forEach(startPoint => {
 	            this.map.createMarker(startPoint);
 	        });
@@ -16972,7 +16973,7 @@
 	            this.map.setCursor('pointer');
 	        }
 	        else {
-	            this.panel.setPoint(this.guessingPoints[this.currentPointIndex], this.currentPointIndex === 0);
+	            this.panel.setPoint(this.guessingPoints[this.currentPointIndex], this.currentPointIndex + 1, this.guessingPoints.length);
 	        }
 	    }
 	    placePoint(pointDefinition, clickedPosition) {
