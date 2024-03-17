@@ -33,3 +33,14 @@ export const setContent = (element: HTMLElement, content: DomContent, append?: b
   }
   appendTo(element, content)
 }
+
+export const btn = (
+  label: string,
+  icon: string,
+  onClick: (event?: any) => void,
+  attributes?: Record<string, string>
+) => {
+  const button = elt('button', attributes || {}, icon + label)
+  button.addEventListener('click', onClick)
+  return button
+}

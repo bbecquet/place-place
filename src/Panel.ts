@@ -1,6 +1,6 @@
 import { GamePoint } from './types'
 import { formatDistance } from './utils'
-import { elt, setContent } from './dom'
+import { elt, btn, setContent } from './dom'
 import { startIcon, restartIcon, checkIcon, fastForwardIcon } from './icons'
 import { pointItem } from './point'
 
@@ -36,20 +36,18 @@ class Panel {
     if (status === 'lastPoint') {
       setContent(this.panel, [
         elt('p', {}, 'Vous pouvez encore changer la position des points avant de les vérifier.'),
-        elt('button', { id: 'finishButton' }, `${checkIcon} Vérifier les positions`),
+        btn('Vérifier les positions', checkIcon, this.onEnd),
       ])
-      document.getElementById('finishButton')?.addEventListener('click', this.onEnd)
     } else if (status === 'scoring') {
       setContent(this.panel, [
         elt('div', { class: 'detailedResults' }, [
           elt('ul', { id: 'pointScores' }),
-          elt('button', { id: 'speedupScoring' }, `${fastForwardIcon} Score final`),
+          btn('Score final', fastForwardIcon, evt => {
+            this.onJumpToResult()
+            ;(evt.target as HTMLElement).remove()
+          }),
         ]),
       ])
-      document.getElementById('speedupScoring')?.addEventListener('click', evt => {
-        this.onJumpToResult()
-        ;(evt.target as HTMLElement).remove()
-      })
     }
   }
 
@@ -64,9 +62,8 @@ class Panel {
         points.map(pt => elt('li', {}, pointItem(pt)))
       ),
       elt('p', {}, `Saurez-vous placer les autres ?`),
-      elt('button', { id: 'startButton' }, `${startIcon} Jouer</button>`),
+      btn('Jouer', startIcon, this.onStart),
     ])
-    document.getElementById('startButton')?.addEventListener('click', this.onStart)
   }
 
   setPoint(point: GamePoint, isFirst?: boolean) {
@@ -91,23 +88,15 @@ class Panel {
       this.panel,
       [
         `<div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>`,
-        elt(
-          'button',
-          { id: 'replayButton' },
-          `${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div>`
+        btn(`<div>Rejouer <div class="small">Mêmes points de départ</div></div>`, restartIcon, () =>
+          this.onRestart(false)
         ),
-        elt(
-          'button',
-          { id: 'replayButtonNew' },
-          `${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div>`
+        btn(`<div>Rejouer <div class="small">Nouveaux points</div></div>`, restartIcon, () =>
+          this.onRestart(true)
         ),
       ],
       true
     )
-    document.getElementById('replayButton')?.addEventListener('click', () => this.onRestart(false))
-    document
-      .getElementById('replayButtonNew')
-      ?.addEventListener('click', () => this.onRestart(true))
   }
 
   updateScoringDistance(point: GamePoint, distance: number, color: string) {
