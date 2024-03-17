@@ -121,7 +121,7 @@ class Panel {
       )
     }
     ;(dist.parentElement as HTMLElement).style.cssText = '--color:' + color
-    setContent(dist as HTMLElement, formatDistance(distance, true))
+    setContent(dist as HTMLElement, formatDistance(distance))
   }
 }
 
