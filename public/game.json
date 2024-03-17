@@ -70,6 +70,12 @@
       "name": "Buttes-Chaumont (belvédère)",
       "position": [48.88109, 2.38307],
       "picto": "pictos/belvedere.svg"
+    },
+    {
+      "id": "bastille",
+      "name": "Place de la Bastille",
+      "position": [48.85318, 2.36914],
+      "picto": "pictos/bastille.svg"
     }
   ]
 }
