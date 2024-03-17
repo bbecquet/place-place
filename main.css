@@ -307,6 +307,10 @@ li:has(.point) {
   font-size: 0.75rem;
 }
 
+#sidebar:not(:has(.score)) .osmcopy {
+  display: none;
+}
+
 @media (max-width: 767px) {
   .score .detailedResults {
     display: none;
