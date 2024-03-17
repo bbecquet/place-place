@@ -49,31 +49,7 @@ main {
 }
 
 .small {
-  font-size: 0.75rem;
-}
-
-button {
-  font-family: 'Madimi One';
-  color: black;
-  font-size: 24px;
-  padding: 15px;
-  border: 2px solid var(--primaryColor);
-  border-radius: 3px;
-  transition: 0.2s all ease;
-  margin: 30px 0 15px;
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  background-color: var(--primaryColorLight);
-}
-
-button:hover {
-  border: 2px solid var(--primaryColorLight);
-  background-color: var(--primaryColorLighter);
-  box-shadow: 0 0 3px 3px #ddd;
+  font-size: 0.8rem;
 }
 
 #map {
@@ -86,6 +62,45 @@ button:hover {
   padding: 1rem;
   z-index: 1000;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
+}
+
+#panel {
+  overflow: auto;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#panel button {
+  flex-shrink: 0;
+  font-family: 'Madimi One';
+  color: black;
+  font-size: 24px;
+  height: 66px;
+  padding: 0 15px;
+  border: 2px solid var(--primaryColor);
+  border-radius: 3px;
+  transition: 0.2s all ease;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--primaryColorLight);
+  text-align: left;
+  text-shadow: 0 -1px 0px var(--primaryColor), 0 1px 0px var(--primaryColorLighter);
+}
+
+#panel button svg {
+  opacity: 0.75;
+}
+
+#panel button:hover {
+  border: 2px solid var(--primaryColorLight);
+  background-color: var(--primaryColorLighter);
+  box-shadow: 0 0 3px 3px #ddd;
 }
 
 .leaflet-div-icon {
