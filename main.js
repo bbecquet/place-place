@@ -16593,6 +16593,11 @@
 	    }
 	    appendTo(element, content);
 	};
+	const btn = (label, icon, onClick, attributes) => {
+	    const button = elt('button', attributes || {}, icon + label);
+	    button.addEventListener('click', onClick);
+	    return button;
+	};
 
 	function getImage(point, color) {
 	    return elt('div', {
@@ -16823,38 +16828,33 @@
 	        this.onJumpToResult = onJumpToResult;
 	    }
 	    setMessage(status) {
-	        var _a, _b;
 	        if (status === 'lastPoint') {
 	            setContent(this.panel, [
 	                elt('p', {}, 'Vous pouvez encore changer la position des points avant de les vérifier.'),
-	                elt('button', { id: 'finishButton' }, `${checkIcon} Vérifier les positions`),
+	                btn('Vérifier les positions', checkIcon, this.onEnd),
 	            ]);
-	            (_a = document.getElementById('finishButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.onEnd);
 	        }
 	        else if (status === 'scoring') {
 	            setContent(this.panel, [
 	                elt('div', { class: 'detailedResults' }, [
 	                    elt('ul', { id: 'pointScores' }),
-	                    elt('button', { id: 'speedupScoring' }, `${fastForwardIcon} Score final`),
+	                    btn('Score final', fastForwardIcon, evt => {
+	                        this.onJumpToResult();
+	                        evt.target.remove();
+	                    }),
 	                ]),
 	            ]);
-	            (_b = document.getElementById('speedupScoring')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', evt => {
-	                this.onJumpToResult();
-	                evt.target.remove();
-	            });
 	        }
 	    }
 	    setNewGame(placeName, points) {
-	        var _a;
 	        this.panel.className = 'new';
 	        setContent(this.panel, [
 	            elt('p', {}, `Ceci est une carte de <b>${placeName}</b>.`),
 	            elt('p', {}, `Les points suivants sont déjà placés&nbsp:`),
 	            elt('ul', {}, points.map(pt => elt('li', {}, pointPanelItem(pt)))),
 	            elt('p', {}, `Saurez-vous placer les autres ?`),
-	            elt('button', { id: 'startButton' }, `${startIcon} Jouer</button>`),
+	            btn('Jouer', startIcon, this.onStart),
 	        ]);
-	        (_a = document.getElementById('startButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.onStart);
 	    }
 	    setPoint(point, isFirst) {
 	        this.panel.className = 'placing';
@@ -16867,17 +16867,14 @@
 	        ]);
 	    }
 	    setScore(score) {
-	        var _a, _b, _c;
+	        var _a;
 	        this.panel.className = 'score';
 	        (_a = document.getElementById('speedupScoring')) === null || _a === void 0 ? void 0 : _a.remove();
 	        setContent(this.panel, [
 	            `<div id="finalScore"><div>Score final</div><div>${formatDistance(score)}</div></div>`,
-	            elt('button', { id: 'replayButton' }, `${restartIcon} <div>Rejouer <div class="small">Mêmes points de départ</div></div>`),
-	            elt('button', { id: 'replayButtonNew' }, `${restartIcon} <div>Rejouer <div class="small">Nouveaux points</div></div>`),
+	            btn(`<div>Rejouer <div class="small">Mêmes points de départ</div></div>`, restartIcon, () => this.onRestart(false)),
+	            btn(`<div>Rejouer <div class="small">Nouveaux points</div></div>`, restartIcon, () => this.onRestart(true)),
 	        ], true);
-	        (_b = document.getElementById('replayButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.onRestart(false));
-	        (_c = document
-	            .getElementById('replayButtonNew')) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => this.onRestart(true));
 	    }
 	    updateScoringDistance(point, distance, color) {
 	        let dist = document.querySelector('#pointScore_' + point.id + ' .dist');
