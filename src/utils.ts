@@ -39,9 +39,9 @@ export function animatePoint(
 
 export const formatDistance = (meters: number, short?: boolean) => {
   if (short && meters > 1000) {
-    return `${(meters / 1000).toFixed(1)} km`
+    return `${(meters / 1000).toFixed(1)}&nbsp;km`
   }
-  return `${Math.round(meters / 10) * 10} m`
+  return `${Math.round(meters / 10) * 10}&nbsp;m`
 }
 
 export const shuffleArray = <T>(array: Array<T>) => {
