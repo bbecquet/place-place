@@ -45,7 +45,6 @@ li {
 main {
   height: 100%;
   display: flex;
-  flex-direction: column;
 }
 
 .small {
@@ -62,6 +61,10 @@ main {
   padding: 1rem;
   z-index: 1000;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-basis: 500px;
 }
 
 #panel {
@@ -244,10 +247,6 @@ main {
   color: var(--color, black);
 }
 
-.pointScore:not(:last-child) {
-  display: none;
-}
-
 .pointScore .dist {
   margin-left: auto;
   flex-shrink: 0;
@@ -308,6 +307,14 @@ li:has(.point) {
 }
 
 @media (max-width: 767px) {
+  main {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    flex-basis: auto;
+  }
+
   .score .detailedResults {
     display: none;
   }
@@ -319,22 +326,8 @@ li:has(.point) {
   .pointNameTooltip {
     font-size: 10px;
   }
-}
 
-@media (min-width: 768px) {
-  main {
-    flex-direction: row;
-  }
-
-  #sidebar {
-    flex-basis: 500px;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  li.pointScore:not(:last-child) {
-    display: flex;
+  .pointScore:not(:last-child) {
+    display: none;
   }
 }
