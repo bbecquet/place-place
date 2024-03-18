@@ -230,7 +230,7 @@ main {
 }
 
 .compass-control {
-  padding: 0.5rem;
+  padding-left: 1rem;
 }
 
 #pointScores {
@@ -305,10 +305,6 @@ li:has(.point) {
 
 .pointNumber {
   font-size: 0.75rem;
-}
-
-#sidebar:not(:has(.score)) .osmcopy {
-  display: none;
 }
 
 @media (max-width: 767px) {

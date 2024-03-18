@@ -16632,12 +16632,13 @@
 	    constructor(element, options, onClick) {
 	        this.background = L$1.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	            className: 'mapBackground',
-	            attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
+	            attribution: `Fond de carte &copy; <a href="http://openstreetmap.org">contributeurs OpenStreetMap</a>`,
 	            opacity: 0,
 	        });
 	        this.markers = L$1.layerGroup();
 	        this.mesh = L$1.layerGroup();
 	        this.results = L$1.layerGroup();
+	        this.attrControl = L$1.control.attribution({ prefix: '' });
 	        /* @ts-ignore no TS declaration for this */
 	        const scale = L$1.control.graphicScale({
 	            fill: 'fill',
@@ -16652,7 +16653,7 @@
 	            attributionControl: false,
 	        })
 	            .addControl(scale)
-	            .addControl(new Compass())
+	            .addControl(new Compass({ position: 'bottomleft' }))
 	            .addLayer(this.background)
 	            .addLayer(this.markers)
 	            .addLayer(this.mesh)
@@ -16666,6 +16667,12 @@
 	    }
 	    toggleBackground(active) {
 	        this.background.setOpacity(active ? 0.75 : 0);
+	        if (active) {
+	            this.map.addControl(this.attrControl);
+	        }
+	        else {
+	            this.map.removeControl(this.attrControl);
+	        }
 	    }
 	    setCursor(cursor) {
 	        this.map.getContainer().style.cursor = cursor;
