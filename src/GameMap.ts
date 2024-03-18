@@ -1,4 +1,5 @@
 import L, {
+  Control,
   LatLngBounds,
   LatLngExpression,
   LayerGroup,
@@ -36,6 +37,7 @@ class GameMap {
   results: LayerGroup
   iconSize: number
   pointToMarker: Record<string, Marker>
+  attrControl: Control
 
   constructor(
     element: HTMLElement,
@@ -44,12 +46,13 @@ class GameMap {
   ) {
     this.background = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       className: 'mapBackground',
-      attribution: `Data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> & contributors`,
+      attribution: `Fond de carte &copy; <a href="http://openstreetmap.org">contributeurs OpenStreetMap</a>`,
       opacity: 0,
     })
     this.markers = L.layerGroup()
     this.mesh = L.layerGroup()
     this.results = L.layerGroup()
+    this.attrControl = L.control.attribution({ prefix: '' })
 
     /* @ts-ignore no TS declaration for this */
     const scale = L.control.graphicScale({
@@ -66,7 +69,7 @@ class GameMap {
       attributionControl: false,
     })
       .addControl(scale)
-      .addControl(new Compass())
+      .addControl(new Compass({ position: 'bottomleft' }))
       .addLayer(this.background)
       .addLayer(this.markers)
       .addLayer(this.mesh)
@@ -83,6 +86,11 @@ class GameMap {
 
   toggleBackground(active: boolean) {
     this.background.setOpacity(active ? 0.75 : 0)
+    if (active) {
+      this.map.addControl(this.attrControl)
+    } else {
+      this.map.removeControl(this.attrControl)
+    }
   }
 
   setCursor(cursor: string) {
